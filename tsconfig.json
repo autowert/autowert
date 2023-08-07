@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+
+    "target": "es6",
+    "lib": ["ES6", "ESNext"],
+    "esModuleInterop": true,
+
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    "skipLibCheck": true,
+
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "forceConsistentCasingInFileNames": true,
+    "pretty": true,
+
+    "sourceMap": false,
+    "inlineSourceMap": true
+  },
+  "include": ["src/**/*", "config.ts"]
+}

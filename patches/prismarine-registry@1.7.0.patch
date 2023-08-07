@@ -1,0 +1,18 @@
+diff --git a/index.js b/index.js
+deleted file mode 100644
+index 4bd4c7509a39e69500568fa2c3dc0969182a8812..0000000000000000000000000000000000000000
+diff --git a/index.d.ts b/lib/index.d.ts
+similarity index 85%
+rename from index.d.ts
+rename to lib/index.d.ts
+index 474a3dd9fa72ba31d7b139cb753a95837901f03a..98a7932e63fdd2183ef475a3b9d44ab35e2bfad6 100644
+--- a/index.d.ts
++++ b/lib/index.d.ts
+@@ -9,6 +9,6 @@ interface PCRegistry extends IndexedData {
+ interface BedrockRegistry extends IndexedData {
+ 
+ }
+-type Registry = PCRegistry & BedrockRegistry
++export type Registry = PCRegistry & BedrockRegistry
+ declare function loader(mcVersion: string): Registry
+ export = loader
