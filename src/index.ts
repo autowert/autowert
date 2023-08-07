@@ -7,6 +7,7 @@ import { Vec3 } from 'vec3';
 import './util/persistentLog'
 import './util/httpServer';
 
+import { uptimePlugin } from './plugins/uptimePlugin';
 import { chatPatternsPlugin } from './plugins/chatPatternsPlugin';
 import { logPlugin } from './plugins/logPlugin';
 import { queueHandlerPlugin } from './plugins/queueHandlerPlugin';
@@ -27,6 +28,7 @@ const botOptions: BotOptions = {
   port: 25565,
 
   plugins: {
+    uptimePlugin,
     chatPatternsPlugin,
     logPlugin,
     queueHandlerPlugin,

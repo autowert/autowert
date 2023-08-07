@@ -22,6 +22,9 @@ dependencies:
   mineflayer:
     specifier: ^4.10.1
     version: 4.10.1
+  pretty-ms:
+    specifier: '7'
+    version: 7.0.1
   prismarine-chat:
     specifier: ^1.8.0
     version: 1.8.0
@@ -880,6 +883,18 @@ packages:
     resolution: {integrity: sha512-Bvso6Zi9LY4otIZefYrscsUpo2mUpiAVIEmSZV2q41sP8tHZoert3Yu6zv4f/RXJqMNZQKCtnhDugIuCma23YA==}
     dependencies:
       asn1: 0.2.3
+    dev: false
+
+  /parse-ms@2.1.0:
+    resolution: {integrity: sha512-kHt7kzLoS9VBZfUsiKjv43mr91ea+U05EyKkEtqp7vNbHxmaVuEqN7XxeEVnGrMtYOAxGrDElSi96K7EgO1zCA==}
+    engines: {node: '>=6'}
+    dev: false
+
+  /pretty-ms@7.0.1:
+    resolution: {integrity: sha512-973driJZvxiGOQ5ONsFhOF/DtzPMOMtgC11kCpUrPGMTgqp2q/1gwzCquocrN33is0VZ5GFHXZYMM9l6h67v2Q==}
+    engines: {node: '>=10'}
+    dependencies:
+      parse-ms: 2.1.0
     dev: false
 
   /prismarine-auth@2.2.0:

@@ -22,6 +22,7 @@
     "minecraft-data": "^3.40.0",
     "minecraft-protocol": "^1.43.2",
     "mineflayer": "^4.10.1",
+    "pretty-ms": "7",
     "prismarine-chat": "^1.8.0",
     "prismarine-chunk": "^1.34.0",
     "timeago.js": "^4.0.2",
