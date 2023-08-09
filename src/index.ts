@@ -91,7 +91,7 @@ function createBot() {
 
     const type = args[0]?.toLowerCase();
 
-    bot.giveKit(username, type);
+    bot.kitStore.giveKit(username, type);
   }
 
   bot.on('outgoingTPaccepted', async (to) => {

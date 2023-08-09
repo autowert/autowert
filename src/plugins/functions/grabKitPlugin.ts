@@ -1,13 +1,12 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
-import type { Chest as chestInfo } from '../../../config';
 import { Vec3 } from 'vec3';
 import { inspect } from 'util';
+import './kitStore';
 
 export const grabKitPlugin: BotPlugin = (bot) => {
-  bot.grabKit = async (chestInfo) => {
+  bot.kitStore.grabKit = async (chestInfo) => {
     const { position: chestCoords } = chestInfo;
     const chestPosition = new Vec3(chestCoords.x, chestCoords.y, chestCoords.z);
-
 
     const chestBlock = bot.blockAt(chestPosition);
     if (!chestBlock) {
@@ -34,9 +33,3 @@ export const grabKitPlugin: BotPlugin = (bot) => {
     await chest.close();
   };
 };
-
-declare module 'mineflayer' {
-  interface Bot {
-    grabKit: (chestInfo: chestInfo) => Promise<void>;
-  }
-}
