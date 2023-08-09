@@ -18,6 +18,8 @@ export const giveKitPlugin: BotPlugin = (bot) => {
     pending.delete(to);
   });
 
+  const totalRequests = new Map<string, number>();
+
   bot.giveKit = async (username, kitName) => {
     kitName = kitName?.toLowerCase();
 
@@ -27,6 +29,14 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       // console.log('still giving a kit to debug the fucking bug');
       return;
     }
+
+    const userTotalRequests = totalRequests.get(username) || 0;
+    if(userTotalRequests > 40) {
+      console.log(`total kit requests from ${username} this session exceed the maximum of 40 (wanted a ${kitName} kit)`);
+
+      return;
+    }
+    totalRequests.set(username, userTotalRequests + 1);
 
     const chestInfo =
       (kitName && chests.find((chest) => chest.names.includes(kitName!))) ||
