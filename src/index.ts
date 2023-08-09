@@ -32,8 +32,8 @@ const botOptions: BotOptions = {
     chatPatternsPlugin,
     logPlugin,
     queueHandlerPlugin,
-    grabKitPlugin,
     giveKitPlugin,
+    grabKitPlugin,
     tpsPlugin,
   },
 

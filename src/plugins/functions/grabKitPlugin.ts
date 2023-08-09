@@ -4,6 +4,8 @@ import { inspect } from 'util';
 import './kitStore';
 
 export const grabKitPlugin: BotPlugin = (bot) => {
+  if(!bot.kitStore) bot.kitStore = {} as any;
+
   bot.kitStore.grabKit = async (chestInfo) => {
     const { position: chestCoords } = chestInfo;
     const chestPosition = new Vec3(chestCoords.x, chestCoords.y, chestCoords.z);
