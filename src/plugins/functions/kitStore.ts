@@ -10,7 +10,7 @@ declare module 'mineflayer' {
       totalRequests: Map<string, number>;
 
       giveKit: (username: string, kitName?: string) => Promise<void>;
-      grabKit: (chestInfo: ChestInfo) => Promise<void>;
+      grabKit: (chestInfo: ChestInfo, amount?: number) => Promise<void>;
     }
   }
 }

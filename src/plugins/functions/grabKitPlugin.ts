@@ -4,9 +4,9 @@ import { inspect } from 'util';
 import './kitStore';
 
 export const grabKitPlugin: BotPlugin = (bot) => {
-  if(!bot.kitStore) bot.kitStore = {} as any;
+  if (!bot.kitStore) bot.kitStore = {} as any;
 
-  bot.kitStore.grabKit = async (chestInfo) => {
+  bot.kitStore.grabKit = async (chestInfo, amount = 1) => {
     const { position: chestCoords } = chestInfo;
     const chestPosition = new Vec3(chestCoords.x, chestCoords.y, chestCoords.z);
 
@@ -27,11 +27,50 @@ export const grabKitPlugin: BotPlugin = (bot) => {
 
     const chest = await bot.openChest(chestBlock);
     try {
-      const item = chest.slots.find((item) => item !== null);
-      if (item) {
-        await chest.withdraw(item.type, null, 1);
+      const targetItem = chest.slots.find((item) => item !== null);
+
+      if (targetItem) {
+        // @ts-ignore wrong nbt types
+        const targetItemName: string | undefined = targetItem?.nbt?.value?.display?.value?.Name?.value;
+
+        let matchingItemsInInventory = bot.inventory.slots.filter((inventoryItem) => {
+          if(!inventoryItem) return false;
+
+          if (inventoryItem.type !== targetItem.type) return false;
+          if (inventoryItem.metadata !== targetItem.metadata) return false;
+
+          if (targetItem.nbt) {
+            if (!inventoryItem.nbt) return false;
+            // @ts-ignore wrong nbt types
+            const inventoryItemName: string | undefined = inventoryItem?.nbt?.value?.display?.value?.Name?.value;
+
+            if (inventoryItemName !== targetItemName) return false;
+          }
+
+          return true;
+        }).length;
+
+        console.log('grabbing kit with name', targetItemName, ', already', matchingItemsInInventory, 'kits in inventory');
+
+        try {
+          if (amount - matchingItemsInInventory === 0) console.log('kit already in inventory, not grabbing');
+          while (amount - matchingItemsInInventory > 0) {
+            // @ts-ignore wrong types: window.withdraw(itemType, metadata, count, nbt)
+            await chest.withdraw(targetItem.type, targetItem.metadata, null, targetItem.nbt);
+
+            matchingItemsInInventory += 1;
+          }
+        } catch (err) {
+          console.error('failed to grab kit in loop');
+          console.error(err);
+        }
+      } else {
+        console.warn('no targetItem in chest, is the chest empty?', chestInfo.names[0]);
       }
-    } catch (err) { }
+    } catch (err) {
+      console.error('error in grabkit');
+      console.error(err)
+    }
     await chest.close();
   };
 };
