@@ -1,5 +1,7 @@
 node_modules
 dist
 
+latest.log
+
 config*.ts
 !config.template.ts
