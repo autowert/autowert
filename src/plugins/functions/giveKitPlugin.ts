@@ -1,18 +1,13 @@
-import type { Plugin as BotPlugin, Bot } from 'mineflayer';
-import { chests } from '../../../config';
-import { Vec3 } from 'vec3';
+import type { Plugin as BotPlugin } from 'mineflayer';
+import { taskInfos, defaultTaskInfo, TaskInfo } from '../../../config';
 import { sleep } from '../../util/sleep';
 import './kitStore';
 
 export const giveKitPlugin: BotPlugin = (bot) => {
   if (!bot.kitStore) bot.kitStore = {} as any;
 
-  bot.kitStore.chests = chests;
-  const defaultChestInfo = bot.kitStore.chests.find((chest) => chest.default)!;
-  if (!defaultChestInfo) {
-    throw new Error('no default chest defined');
-  }
-  bot.kitStore.defaultChest = defaultChestInfo;
+  bot.kitStore.taskInfos = taskInfos;
+  bot.kitStore.defaultTaskInfo = defaultTaskInfo;
 
   bot.kitStore.pendingRequests = new Set();
   bot.on('outgoingTPrequest', (to) => { bot.kitStore.pendingRequests.add(to); });
@@ -30,34 +25,44 @@ export const giveKitPlugin: BotPlugin = (bot) => {
 
     if (bot.kitStore.pendingRequests.has(username)) {
       console.log(`pending request to ${username}, not giving a kit. (wanted a ${kitName} kit)`);
-
-      // console.log('still giving a kit to debug the fucking bug');
       return;
     }
 
     const userTotalRequests = bot.kitStore.totalRequests.get(username) || 0;
-    if(userTotalRequests > 40) {
+    if (userTotalRequests > 40) {
       console.log(`total kit requests from ${username} this session exceed the maximum of 40 (wanted a ${kitName} kit)`);
 
       return;
     }
     bot.kitStore.totalRequests.set(username, userTotalRequests + 1);
 
-    const chestInfo =
-      (kitName && bot.kitStore.chests.find((chest) => chest.names.includes(kitName!))) ||
-      bot.kitStore.defaultChest;
+    let taskInfo: TaskInfo;
+    if (kitName) {
+      const _taskInfo = bot.kitStore.taskInfos.find(
+        (taskInfo) => {
+          return taskInfo.names.includes(kitName || '')
+        }
+      );
 
-    if (kitName && chestInfo === bot.kitStore.defaultChest && !bot.kitStore.defaultChest.names.includes(kitName)) {
-      console.log('unknown kit:', kitName, '-', 'not giving a kit.');
-      return;
+      if (!_taskInfo) {
+        console.log('unknown kit:', kitName, '-', 'not giving a kit.');
+        return;
+      }
+      taskInfo = _taskInfo;
+    } else {
+      const _taskInfo = bot.kitStore.defaultTaskInfo;
+      if (!_taskInfo) return; // no default task
+      taskInfo = _taskInfo;
     }
 
-    console.log(`giving a ${chestInfo.names.at(0) || 'NO NAME WTF?'} (${kitName}) kit to ${username}.`)
+    console.log(`executing task ${taskInfo.names.at(0) || 'NO NAME WTF?'} (${kitName}) kit to ${username}.`)
+
+    const task = taskInfo.task;
     try {
-      await bot.kitStore.grabKit(chestInfo);
+      await task.execute(bot);
       bot.chat(`/tpa ${username}`);
     } catch (err) {
-      console.log('failed to get kit');
+      console.log('failed to execute task', task.getName());
       console.log(err);
 
       bot.chat('/kill');

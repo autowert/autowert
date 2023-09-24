@@ -13,7 +13,6 @@ import { logPlugin } from './plugins/logPlugin';
 import { queueHandlerPlugin } from './plugins/queueHandlerPlugin';
 import { tpsPlugin } from './plugins/tpsPlugin';
 
-import { grabKitPlugin } from './plugins/functions/grabKitPlugin';
 import { giveKitPlugin } from './plugins/functions/giveKitPlugin';
 
 import { sleep } from './util/sleep';
@@ -33,7 +32,6 @@ const botOptions: BotOptions = {
     logPlugin,
     queueHandlerPlugin,
     giveKitPlugin,
-    grabKitPlugin,
     tpsPlugin,
   },
 

@@ -1,16 +1,15 @@
-import type { Chest as ChestInfo } from '../../../config';
+import type { TaskInfo } from '../../../config';
 
 declare module 'mineflayer' {
   interface Bot {
     kitStore: {
-      chests: ChestInfo[];
-      defaultChest: ChestInfo;
+      taskInfos: TaskInfo[];
+      defaultTaskInfo: TaskInfo | false;
 
       pendingRequests: Set<string>;
       totalRequests: Map<string, number>;
 
       giveKit: (username: string, kitName?: string) => Promise<void>;
-      grabKit: (chestInfo: ChestInfo, amount?: number) => Promise<void>;
     }
   }
 }
