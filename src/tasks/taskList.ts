@@ -1,16 +1,25 @@
+import { sleep } from '../util/sleep';
 import { Task } from './task';
+
+const taskListDefaultOptions: TaskListOptions = {
+  intermission: 0,
+};
 
 export class TaskList extends Task {
   protected tasks: Task[];
+  protected options: TaskListOptions;
 
-  constructor(tasks: Task[]) {
+  constructor(tasks: Task[], options?: Partial<TaskListOptions>) {
     super();
 
     this.tasks = tasks;
+    this.options = { ...taskListDefaultOptions, ...options };
   }
 
   async execute(...args: Parameters<Task['execute']>) {
-    for (const task of this.tasks) {
+    for (const [index, task] of this.tasks.entries()) {
+      if (index !== 0) await sleep(this.options.intermission);
+
       await task.execute(...args);
     }
   }
@@ -21,3 +30,7 @@ export class TaskList extends Task {
     return `${taskName} [${subTaskNames.join(', ') || '<empty>'}]`;
   }
 }
+
+export type TaskListOptions = {
+  intermission: number;
+};
