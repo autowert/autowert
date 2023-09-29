@@ -37,7 +37,7 @@ const taskDefinitions: TaskDefinition[] = [
     task: new TaskList([
       new TaskGrabItemsFromChestAndClose(chestPositions.tools),
       new TaskGrabItemsFromChestAndClose(chestPositions.trees),
-    ]),
+    ], { delay: 50 }),
   },
 ];
 

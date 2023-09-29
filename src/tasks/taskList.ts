@@ -2,7 +2,7 @@ import { sleep } from '../util/sleep';
 import { Task } from './task';
 
 const taskListDefaultOptions: TaskListOptions = {
-  intermission: 0,
+  delay: 0,
 };
 
 export class TaskList extends Task {
@@ -18,7 +18,7 @@ export class TaskList extends Task {
 
   async execute(...args: Parameters<Task['execute']>) {
     for (const [index, task] of this.tasks.entries()) {
-      if (index !== 0) await sleep(this.options.intermission);
+      if (index !== 0) await sleep(this.options.delay);
 
       await task.execute(...args);
     }
@@ -32,5 +32,5 @@ export class TaskList extends Task {
 }
 
 export type TaskListOptions = {
-  intermission: number;
+  delay: number;
 };
