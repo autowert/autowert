@@ -34,7 +34,6 @@ export const giveKitPlugin: BotPlugin = (bot) => {
 
       return;
     }
-    bot.kitStore.totalRequests.set(username, userTotalRequests + 1);
 
     let taskInfo: TaskInfo;
     if (kitName) {
@@ -54,6 +53,8 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       if (!_taskInfo) return; // no default task
       taskInfo = _taskInfo;
     }
+
+    bot.kitStore.totalRequests.set(username, userTotalRequests + 1);
 
     console.log(`executing task ${taskInfo.names.at(0) || 'NO NAME WTF?'} (${kitName}) kit to ${username}.`)
 
