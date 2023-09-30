@@ -12,7 +12,8 @@ export const giveKitPlugin: BotPlugin = (bot) => {
   bot.kitStore.pendingRequests = new Set();
   bot.on('outgoingTPrequest', (to) => { bot.kitStore.pendingRequests.add(to); });
   bot.on('outgoingTPaccepted', (to) => { bot.kitStore.pendingRequests.delete(to); });
-  bot.on('outgoingTPaccepted', (to) => { bot.kitStore.pendingRequests.delete(to); });
+
+  bot.on('outgoingTPtimeout', (to) => { bot.kitStore.pendingRequests.delete(to); });
   bot.on('outgoingTPdenied', async (to) => {
     await sleep(30 * 1000);
     bot.kitStore.pendingRequests.delete(to);
