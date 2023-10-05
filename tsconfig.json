@@ -2,7 +2,7 @@
   "compilerOptions": {
     "noEmit": true,
 
-    "target": "es6",
+    "target": "ESNext",
     "lib": ["ES6", "ESNext"],
     "esModuleInterop": true,
 
