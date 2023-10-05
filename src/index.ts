@@ -12,6 +12,7 @@ import { chatPatternsPlugin } from './plugins/chatPatternsPlugin';
 import { logPlugin } from './plugins/logPlugin';
 import { queueHandlerPlugin } from './plugins/queueHandlerPlugin';
 import { tpsPlugin } from './plugins/tpsPlugin';
+import { getConnectedContainersPlugin, getTotalStacks } from './plugins/getConnectedContainers';
 
 import { giveKitPlugin } from './plugins/functions/giveKitPlugin';
 
@@ -33,6 +34,7 @@ const botOptions: BotOptions = {
     queueHandlerPlugin,
     giveKitPlugin,
     tpsPlugin,
+    getConnectedContainersPlugin,
   },
 
   logOptions: {
@@ -111,6 +113,7 @@ createBot();
 Object.assign(global, {
   Vec3,
   mineflayer,
+  getTotalStacks,
 });
 
 const debuggerEnabled = process.execArgv.includes('--inspect');
