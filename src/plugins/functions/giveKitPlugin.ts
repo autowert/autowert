@@ -9,7 +9,7 @@ export const giveKitPlugin: BotPlugin = (bot) => {
   bot.kitStore.taskInfos = taskInfos;
   bot.kitStore.defaultTaskInfo = defaultTaskInfo;
 
-  bot.kitStore.pendingRequests = new Set();
+  bot.kitStore.pendingRequests = new Set<string>();
   bot.on('outgoingTPrequest', (to) => { bot.kitStore.pendingRequests.add(to); });
   bot.on('outgoingTPaccepted', (to) => { bot.kitStore.pendingRequests.delete(to); });
 
@@ -19,7 +19,7 @@ export const giveKitPlugin: BotPlugin = (bot) => {
     bot.kitStore.pendingRequests.delete(to);
   });
 
-  bot.kitStore.totalRequests = new Map();
+  bot.kitStore.totalRequests = new Map<string, number>();
 
   bot.kitStore.giveKit = async (username, kitName) => {
     kitName = kitName?.toLowerCase();
