@@ -51,6 +51,17 @@ function createBot() {
   const bot = mineflayer.createBot(localOptions);
   Object.assign(global, { bot });
 
+  const checkBotUp = () => {
+    if(bot._client.ended) {
+      console.log('bot._cliend seems to be ended, emmiting end');
+      bot.emit('end', '_client ended');
+    }
+  };
+  const checkBotUpInterval = setInterval(checkBotUp, 60 * 1000);
+  bot.once('end', () => {
+    clearInterval(checkBotUpInterval);
+  });
+
   bot.on('incomingTPrequest', async (from) => {
     if (from !== 'Manue__l') return;
 
