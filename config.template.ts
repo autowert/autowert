@@ -1,7 +1,7 @@
 import type { Task } from './src/tasks/task';
 
 import { Vec3 } from 'vec3';
-import { TaskGrabItemsFromChestAndClose } from './src/tasks/taskGrabItemsFromChestAndClose';
+import { TaskGrabItemsFromChestAndClose } from './src/tasks/chest/taskGrabItemsFromChestAndClose';
 import { TaskList } from './src/tasks/taskList';
 
 const baseChest = { x: 0, y: 0, z: 0 };

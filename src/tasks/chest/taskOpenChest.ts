@@ -1,4 +1,4 @@
-import { Task } from './task';
+import { Task } from '../task';
 import type { Bot } from 'mineflayer';
 import type { Vec3 } from 'vec3';
 

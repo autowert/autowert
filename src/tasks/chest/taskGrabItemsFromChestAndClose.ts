@@ -1,4 +1,4 @@
-import { TaskList } from './taskList';
+import { TaskList } from '../taskList';
 import type { Vec3 } from 'vec3';
 
 import { TaskOpenChest } from './taskOpenChest';

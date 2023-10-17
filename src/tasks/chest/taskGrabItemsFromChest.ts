@@ -1,4 +1,4 @@
-import { Task } from './task';
+import { Task } from '../task';
 import type { Bot, Chest } from 'mineflayer';
 
 export class TaskGrabItemsFromChest extends Task {
