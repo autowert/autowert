@@ -1,5 +1,6 @@
 export const parseMsg = (message: string) => {
-  const [cmd, ...parts] = message.split(' ');
+  const [_cmd, ...parts] = message.split(' ');
+  const cmd = _cmd.toLowerCase();
 
   const args: string[] = [];
   const flags: Record<string, string | boolean | number> = {};
@@ -7,7 +8,9 @@ export const parseMsg = (message: string) => {
     if (part.startsWith('--')) {
       const str = part.slice(2);
 
-      const [match, key, _val] = str.match(/^(.+?)(?:=(.*))?$/)!;
+      const [match, _key, _val] = str.match(/^(.+?)(?:=(.*))?$/)!;
+      const key = _key.toLowerCase();
+
       let val: boolean | number | string;
       if (_val === undefined) val = true;
       else if (_val === '') val = '';

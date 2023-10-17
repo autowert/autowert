@@ -52,7 +52,7 @@ function createBot() {
   Object.assign(global, { bot });
 
   const checkBotUp = () => {
-    if(bot._client.ended) {
+    if (bot._client.ended) {
       console.log('bot._cliend seems to be ended, emmiting end');
       bot.emit('end', '_client ended');
     }
@@ -98,11 +98,12 @@ function createBot() {
     const cmdMessage = message.replace(/^\W+/, '');
     const { cmd, args } = parseMsg(cmdMessage);
 
-    if (!/^kit/i.test(cmd)) return;
-
-    const type = args[0]?.toLowerCase();
-
-    bot.kitStore.giveKit(username, type);
+    switch (cmd) {
+      case 'kit': {
+        const type = args[0]?.toLowerCase();
+        bot.kitStore.giveKit(username, type);
+      } break;
+    }
   }
 
   bot.on('outgoingTPaccepted', async (to) => {
