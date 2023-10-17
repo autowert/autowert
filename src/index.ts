@@ -18,6 +18,7 @@ import { giveKitPlugin } from './plugins/functions/giveKitPlugin';
 
 import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
+import {windowInteractionsPlugin} from './plugins/windowInteractionsPlugin';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -35,6 +36,7 @@ const botOptions: BotOptions = {
     giveKitPlugin,
     tpsPlugin,
     getConnectedContainersPlugin,
+    windowInteractionsPlugin,
   },
 
   logOptions: {
