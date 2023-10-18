@@ -5,7 +5,7 @@ import { Vec3 } from 'vec3';
 
 import { sleep } from '../../util/sleep';
 
-import { bookMaterialsChestPosition } from '../../../config.template';
+import { bookMaterialsChestPosition } from '../../../config';
 
 export class TaskGetWritableBook extends Task {
   private materialsChestPosition: Vec3;
