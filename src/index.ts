@@ -13,12 +13,14 @@ import { logPlugin } from './plugins/logPlugin';
 import { queueHandlerPlugin } from './plugins/queueHandlerPlugin';
 import { tpsPlugin } from './plugins/tpsPlugin';
 import { getConnectedContainersPlugin, getTotalStacks } from './plugins/getConnectedContainers';
+import { windowInteractionsPlugin } from './plugins/windowInteractionsPlugin';
 
 import { giveKitPlugin } from './plugins/functions/giveKitPlugin';
 
 import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
-import {windowInteractionsPlugin} from './plugins/windowInteractionsPlugin';
+
+import { TaskGetWritableBook } from './tasks/items/taskGetWritableBook';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -104,6 +106,26 @@ function createBot() {
       case 'kit': {
         const type = args[0]?.toLowerCase();
         bot.kitStore.giveKit(username, type);
+      } break;
+
+      case 'booktest': {
+        let writableBookSlot = bot.inventory.slots.findIndex(item => item && item.name === 'writable_book');
+        if (writableBookSlot === -1) {
+          await new TaskGetWritableBook().execute(bot);
+          writableBookSlot = bot.inventory.slots.findIndex(item => item && item.name === 'writable_book');
+        }
+
+        if (writableBookSlot === -1) throw new Error('no writable book found, and could not get one');
+        
+        // bot.signBook( slot, pages, author, title )
+        await (<any>bot).signBook(writableBookSlot, [
+          new Date().toLocaleString(),
+          Math.random().toString(36).slice(2),
+          Math.random().toString(36).slice(2),
+          Math.random().toString(36).slice(2),
+        ], bot.username, '§d§l' + 'a book from ' + Date.now().toString(36));
+
+        await bot.windowInteractions.dropItemFromSlot(writableBookSlot);
       } break;
     }
   }

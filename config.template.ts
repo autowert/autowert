@@ -4,6 +4,9 @@ import { Vec3 } from 'vec3';
 import { TaskGrabItemsFromChestAndClose } from './src/tasks/chest/taskGrabItemsFromChestAndClose';
 import { TaskList } from './src/tasks/taskList';
 
+// shulker, chest or double chest with feathers, ink sacks and books
+export const bookMaterialsChestPosition = new Vec3(0, 0, 0);
+
 const baseChest = { x: 0, y: 0, z: 0 };
 function getPosition(row: number, col: number) {
   const x = baseChest.x;
