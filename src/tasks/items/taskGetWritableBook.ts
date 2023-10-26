@@ -17,6 +17,9 @@ export class TaskGetWritableBook extends Task {
   }
 
   async execute(bot: Bot) {
+    const hasWritableBook = bot.inventory.slots.some(item => item && item.name === 'writable_book');
+    if (hasWritableBook) return console.log('bot already has writable book in inventory');
+
     const chestPos = this.materialsChestPosition;
 
     const chestBlock = bot.blockAt(chestPos);
