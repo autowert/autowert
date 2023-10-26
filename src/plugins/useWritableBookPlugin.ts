@@ -6,7 +6,7 @@ export const useWritableBookPlugin: BotPlugin = (bot) => {
     return slot === -1 ? null : slot;
   }
   bot.hasWritableBookInInventory = () => {
-    const slot = bot.findWritableBookSlot;
+    const slot = bot.findWritableBookSlot();
     return slot !== null;
   }
 
