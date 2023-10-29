@@ -3,6 +3,7 @@ import type { Task } from './src/tasks/task';
 import { Vec3 } from 'vec3';
 import { TaskGrabItemsFromChestAndClose } from './src/tasks/chest/taskGrabItemsFromChestAndClose';
 import { TaskList } from './src/tasks/taskList';
+import { TaskGetWritableBook } from './src/tasks/items/taskGetWritableBook';
 
 // shulker, chest or double chest with feathers, ink sacks and books
 export const bookMaterialsChestPosition = new Vec3(0, 0, 0);
@@ -28,6 +29,10 @@ const defaultTaskDefinition: TaskDefinition | false = {
 }; // can be false to not give a default kit
 
 const taskDefinitions: TaskDefinition[] = [
+  {
+    names: ['help', 'list'],
+    task: new TaskGetWritableBook(),
+  },
   {
     // if no task is defined, it will grab a kit
     // from the first name's chest (pvp)
@@ -70,9 +75,13 @@ type TaskDefinition = {
   // if the task only has names,
   // the first name is used to set up the default task
   names: [keyof typeof chestPositions, ...string[]],
+
+  hideFromHelp?: boolean,
 } | TaskInfo;
 
 export type TaskInfo = {
   names: string[],
   task: Task,
+
+  hideFromHelp?: boolean,
 };
