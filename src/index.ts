@@ -77,7 +77,7 @@ function createBot() {
 
   bot.on('suicideFailed', async () => {
     console.log('suicide failed, retrying...');
-    await sleep(1000);
+    await sleep(2000);
     bot.chat('/kill');
   });
 
