@@ -9,19 +9,26 @@ export class TaskSuicide extends Task {
     return new Promise<void>((resolve) => {
       let died = false;
       const suicideFailedListener = async () => {
-        await sleep(1000);
+        console.log('suicide failed');
 
+
+        await sleep(2000);
         if (died) return;
+
+        console.log('retrying /kill');
         bot.chat('/kill');
       };
       bot.on('suicideFailed', suicideFailedListener);
 
       bot.once('death', () => {
+        console.log('bot died');
+
         bot.off('suicideFailed', suicideFailedListener);
 
         resolve();
       })
 
+      console.log('attempting to run /kill');
       bot.chat('/kill');
     });
   }
