@@ -22,6 +22,7 @@ import { useWritableBookPlugin } from './plugins/useWritableBookPlugin';
 
 import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
+import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -119,42 +120,8 @@ function createBot() {
     await sleep(50);
 
     if (bot.hasWritableBookInInventory()) {
-      const pages: string[] = [];
-
-      pages.push(`
-Hey §l${to}§r,
-you can find all the kits I have on the following pages of this book.
-
-If you like §2§l${bot.username}§r, please consider telling your friends about it.
-
-
-
-§7> ${df(Date.now(), 'UTC: hh:MM TT, dd.mm.yy Z')}
-`.slice(1, -1));
-
-      let n = 1;
-      const allKits = bot.kitStore.taskInfos
-        .filter(taskInfo => !taskInfo.hideFromHelp)
-        .map(taskInfo => taskInfo.names[0]);
-      while (allKits.length) {
-        const kitsToShow = allKits.splice(0, 8);
-        pages.push('§lKit List ' + n + ':§r\n- ' + kitsToShow.join('\n- ') + '\n'.repeat(8 - kitsToShow.length) + '\n\n\n' + '§8to get any kit,§r\n §8just type &kit <name>§r');
-
-        n += 1;
-      }
-
-      pages.push(`
-§2§l${bot.username}'s§r
-§nmission§r
-is to help new and old players §lbuild,§r
-§lfight and explore§r
-by giving them the §lblocks, tools and§r
-§litems§r they need
-in the §lfastest§r and §lmost convenient§r way possible.
-`.slice(1, -1))
-
       try {
-        await bot.useWritableBook(pages, '§d§lautowert help', { drop: true });
+        await new TaskWriteHelpBook(to).execute(bot);
       } catch {
         console.warn('failed to write help book');
       }
