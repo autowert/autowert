@@ -1,7 +1,7 @@
 console.clear();
 
 import { once } from 'events';
-import mineflayer, { BotOptions } from 'mineflayer';
+import mineflayer, { type BotOptions } from 'mineflayer';
 import { Vec3 } from 'vec3';
 
 import './util/persistentLog'
