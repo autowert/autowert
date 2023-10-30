@@ -93,7 +93,7 @@ function createBot() {
   });
 
   async function handleMessage(username: string, message: string) {
-    if(bot.isProcessingTaskAway) return;
+    if (bot.isProcessingTaskAway) return console.log('processing task away');
 
     const cmdMessage = message.replace(/^\W+/, '');
     const { cmd, args } = parseMsg(cmdMessage);
