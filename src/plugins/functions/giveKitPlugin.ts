@@ -1,7 +1,11 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
-import { taskInfos, defaultTaskInfo, TaskInfo } from '../../../config';
+
 import { sleep } from '../../util/sleep';
+import { ItemOutOfStockError } from '../../tasks/chest/taskGrabItemsFromChest';
+
 import './kitStore';
+
+import { taskInfos, defaultTaskInfo } from '../../../config';
 
 export const giveKitPlugin: BotPlugin = (bot) => {
   if (!bot.kitStore) bot.kitStore = {} as any;
@@ -36,7 +40,7 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       return;
     }
 
-    let taskInfo: TaskInfo;
+    let taskInfo: (typeof bot)['kitStore']['taskInfos'][number];
     if (kitName) {
       const _taskInfo = bot.kitStore.taskInfos.find(
         (taskInfo) => {
@@ -55,9 +59,13 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       taskInfo = _taskInfo;
     }
 
-    bot.kitStore.totalRequests.set(username, userTotalRequests + 1);
-
     console.log(`executing task ${taskInfo.names.at(0) || 'NO NAME WTF?'} (${kitName}) kit to ${username}.`)
+    if (taskInfo.isOutOfStock) {
+      console.warn('item is out of stock, not giving a kit');
+      return;
+    }
+
+    bot.kitStore.totalRequests.set(username, userTotalRequests + 1);
 
     const task = taskInfo.task;
     try {
@@ -66,6 +74,11 @@ export const giveKitPlugin: BotPlugin = (bot) => {
     } catch (err) {
       console.log('failed to execute task', task.getName());
       console.log(err);
+
+      if (err instanceof ItemOutOfStockError) {
+        console.error('kit', taskInfo.names[0], 'is out of stock, disableing');
+        taskInfo.isOutOfStock = true;
+      }
 
       bot.chat('/kill');
     }
