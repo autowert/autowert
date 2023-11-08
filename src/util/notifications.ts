@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { notificationOptions } from '../../config';
 
-export async function publish(message: PublishMessage) {
+export async function publishNotification(message: PublishMessage) {
   if (!notificationOptions.enabled) return;
 
   const instance = notificationOptions.instance || 'https://ntfy.sh/';
