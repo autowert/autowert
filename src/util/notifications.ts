@@ -1,11 +1,17 @@
 import axios from 'axios';
 
-export async function publish(message: PublishMessage, instance = 'https://ntfy.sh/') {
-  axios.post(instance, message);
+import { notificationOptions } from '../../config';
+
+export async function publish(message: PublishMessage) {
+  if (!notificationOptions.enabled) return;
+
+  const instance = notificationOptions.instance || 'https://ntfy.sh/';
+  const topic = notificationOptions.topic;
+
+  axios.post(instance, { topic, ...message });
 }
 
 export type PublishMessage = {
-  topic: string;
   message?: string;
   title?: string;
   tags?: string[];

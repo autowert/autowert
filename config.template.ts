@@ -5,6 +5,12 @@ import { TaskGrabItemsFromChestAndClose } from './src/tasks/chest/taskGrabItemsF
 import { TaskList } from './src/tasks/taskList';
 import { TaskGetWritableBook } from './src/tasks/items/taskGetWritableBook';
 
+export const notificationOptions: NotificationOptions = {
+  enabled: true,
+  instance: 'https://ntfy.sh/',
+  topic: 'example-bot-topic',
+};
+
 // shulker, chest or double chest with feathers, ink sacks and books
 export const bookMaterialsChestPosition = new Vec3(0, 0, 0);
 
@@ -85,3 +91,11 @@ export type TaskInfo = {
 
   hideFromHelp?: boolean,
 };
+
+export type NotificationOptions = {
+  enabled: false;
+} | {
+  enabled: true;
+  instance?: string; // https://ntfy.sh/
+  topic: string;
+}
