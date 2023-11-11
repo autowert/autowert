@@ -23,6 +23,7 @@ import { useWritableBookPlugin } from './plugins/useWritableBookPlugin';
 import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
 import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
+import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPlugin';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -42,6 +43,7 @@ const botOptions: BotOptions = {
     getConnectedContainersPlugin,
     windowInteractionsPlugin,
     useWritableBookPlugin,
+    playerNearNotificationPlugin,
   },
 
   logOptions: {
