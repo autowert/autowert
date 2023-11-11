@@ -70,10 +70,8 @@ function createBot() {
   });
 
   bot.on('incomingTPrequest', async (from) => {
-    if (from !== 'Manue__l') return;
-
-    await once(bot, 'spawn');
-    bot.chat('/tpy Manue__l');
+    if (from === 'Manue__l') bot.chat('/tpy Manue__l');
+    else if (from === 'GoogleComStuff') bot.chat('/tpy GoogleComStuff');
   });
 
   bot.on('suicideFailed', async () => {
