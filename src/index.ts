@@ -111,7 +111,9 @@ function createBot() {
         const type = args[0]?.toLowerCase();
         bot.kitStore.giveKit(username, type);
       } break;
-      case 'kits': {
+
+      case 'kits':
+      case 'list': {
         bot.kitStore.giveKit(username, 'help');
       } break;
 
