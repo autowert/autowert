@@ -23,7 +23,7 @@ function getPosition(row: number, col: number) {
   return new Vec3(x, y, z);
 }
 
-const chestPositions = {
+export const chestPositions = {
   pvp: getPosition(0, 0),
   tools: getPosition(0, 1),
   trees: getPosition(0, 2),

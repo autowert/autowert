@@ -24,6 +24,7 @@ import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
 import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
 import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPlugin';
+import { chestPositions } from '../config';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -112,7 +113,30 @@ function createBot() {
       } break;
       case 'kits': {
         bot.kitStore.giveKit(username, 'help');
-      }
+      } break;
+
+      case 'opkit': {
+        if (username !== 'Manue__l') return;
+
+        const kit = args[0]?.toLowerCase();
+        const chestPos = (chestPositions as any)[kit] as Vec3 | undefined;
+
+        if (!kit || !chestPos) return bot.chat('/w ' + username + ' usage: opkit <kitname>');
+
+        const chestBlock = bot.blockAt(chestPos);
+        if (!chestBlock) return;
+
+        const chest = await bot.openChest(chestBlock);
+        for (let slot = 0; slot < chest.inventoryStart; slot++) {
+          try {
+            await bot.windowInteractions.shiftLeftClick(slot);
+          } catch (err) { console.log('transaction failed'); }
+          await sleep(20);
+        }
+
+        await chest.close();
+        bot.chat('/tpa ' + username);
+      } break;
     }
   }
 
