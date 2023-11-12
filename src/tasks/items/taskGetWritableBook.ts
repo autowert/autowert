@@ -6,6 +6,7 @@ import { Vec3 } from 'vec3';
 import { sleep } from '../../util/sleep';
 
 import { bookMaterialsChestPosition } from '../../../config';
+import { TaskEnsureNearBlock } from '../chest/taskEnsureNearBlock';
 
 export class TaskGetWritableBook extends Task {
   private materialsChestPosition: Vec3;
@@ -21,6 +22,8 @@ export class TaskGetWritableBook extends Task {
     if (hasWritableBook) return console.log('bot already has writable book in inventory');
 
     const chestPos = this.materialsChestPosition;
+
+    await new TaskEnsureNearBlock(chestPos, 6).execute(bot);
 
     const chestBlock = bot.blockAt(chestPos);
     if (!chestBlock) throw new Error('book chest block not found');

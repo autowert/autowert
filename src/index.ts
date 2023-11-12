@@ -25,6 +25,7 @@ import { parseMsg } from './util/parseMsg';
 import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
 import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPlugin';
 import { chestPositions } from '../config';
+import { TaskEnsureNearBlock } from './tasks/chest/taskEnsureNearBlock';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -164,8 +165,9 @@ function createBot() {
 
         const kit = args[0]?.toLowerCase();
         const chestPos = (chestPositions as any)[kit] as Vec3 | undefined;
-
         if (!kit || !chestPos) return bot.chat('/w ' + username + ' usage: opkit <kitname>');
+
+        await new TaskEnsureNearBlock(chestPos, 6).execute(bot);
 
         const chestBlock = bot.blockAt(chestPos);
         if (!chestBlock) return;
