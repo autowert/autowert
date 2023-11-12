@@ -63,7 +63,7 @@ export class TaskEnsureNearBlock extends Task {
 
     const direction = Object.keys(impact).reduce(
       //@ts-ignore weird types
-      (a, b) => impact[a] > impact[b] ? a : b,
+      (a, b) => impact[a] < impact[b] ? a : b,
     ) as Direction;
 
     const yaw = directionYaws[direction];
