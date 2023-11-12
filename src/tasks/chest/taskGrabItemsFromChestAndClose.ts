@@ -17,7 +17,7 @@ export class TaskGrabItemsFromChestAndClose extends TaskList {
     this.amount = amount;
 
     this.tasks.push(
-      new TaskEnsureNearBlock(this.chestPosition, 6.2),
+      new TaskEnsureNearBlock(this.chestPosition, 6),
       new TaskOpenChest(this.chestPosition),
       new TaskGrabItemsFromChest(this.amount),
       new TaskCloseChest(),

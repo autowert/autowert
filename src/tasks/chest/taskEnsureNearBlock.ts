@@ -25,7 +25,7 @@ export class TaskEnsureNearBlock extends Task {
   protected blockPosition: Vec3;
   protected range: number;
 
-  constructor(blockPosition: Vec3, range = 6.2) {
+  constructor(blockPosition: Vec3, range: number) {
     super();
 
     this.blockPosition = blockPosition;
