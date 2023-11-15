@@ -38,6 +38,8 @@ export class TaskEnsureNearBlock extends Task {
     const currentDistance = getDistance();
     if (currentDistance < this.range) return;
 
+    if (currentDistance > 256) throw new Error('target position is too far away');
+
     const impact: Partial<Record<Direction, number>> = {};
     for (const [direction, offset] of Object.entries(directionOffsets) as [Direction, Offset][]) {
       const newPosition = bot.entity.position.offset(...offset);
@@ -69,11 +71,14 @@ export class TaskEnsureNearBlock extends Task {
     const yaw = directionYaws[direction];
     await bot.look(yaw, 0, false);
 
+    let lastDistance = currentDistance;
+
     bot.setControlState('forward', true);
     bot.setControlState('sprint', true);
-    return new Promise<void>((resolve) => {
+    return new Promise<void>((resolve, reject) => {
       const moveListener: BotEvents['move'] = () => {
         const distance = getDistance();
+
         if (distance < this.range) {
           bot.setControlState('forward', false);
           bot.setControlState('sprint', false);
@@ -81,7 +86,13 @@ export class TaskEnsureNearBlock extends Task {
           bot.off('move', moveListener);
 
           resolve();
+          return;
         }
+
+        if (lastDistance < distance) {
+          reject(new Error('distance went up'));
+        }
+        lastDistance = distance;
       };
       bot.on('move', moveListener);
     });
