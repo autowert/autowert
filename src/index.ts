@@ -1,7 +1,7 @@
 console.clear();
 
 import { once } from 'events';
-import mineflayer, { type BotOptions } from 'mineflayer';
+import mineflayer, { BotEvents, type BotOptions } from 'mineflayer';
 import { Vec3 } from 'vec3';
 
 import df from 'dateformat';
@@ -26,6 +26,7 @@ import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
 import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPlugin';
 import { chestPositions } from '../config';
 import { TaskEnsureNearBlock } from './tasks/chest/taskEnsureNearBlock';
+import { eflyPlugin } from './plugins/eflyPlugin';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -46,6 +47,7 @@ const botOptions: BotOptions = {
     windowInteractionsPlugin,
     useWritableBookPlugin,
     playerNearNotificationPlugin,
+    eflyPlugin,
   },
 
   logOptions: {
@@ -111,6 +113,9 @@ function createBot() {
     }
   });
 
+  bot.on('death', () => {
+    bot.clearControlStates();
+  });
   bot.on('suicideFailed', async () => {
     console.log('suicide failed, retrying...');
 
@@ -182,6 +187,61 @@ function createBot() {
 
         await chest.close();
         bot.chat('/tpa ' + username);
+      } break;
+
+      case 'efly': {
+        if (username !== 'Manue__l') return;
+
+        await bot.efly.equip();
+        await bot.efly.takeoff();
+
+        for (const offset of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const feetBlock = bot.blockAt(bot.entity.position.offset(offset[0], 0, offset[1]));
+          const headBlock = bot.blockAt(bot.entity.position.offset(offset[0], 1, offset[1]));
+          if (feetBlock?.name === 'air' && headBlock?.name === 'air') {
+            bot.lookAt(headBlock.position, true);
+
+            bot.efly.setState('forward', true);
+            bot.efly.setState('up', true);
+
+            await sleep(250);
+            bot.efly.clearState();
+
+            break;
+          }
+        }
+
+        const updateInterval = setInterval(async () => {
+          const target =
+            Object.values(bot.entities)
+              .filter(entity => entity.type === 'player' && entity.username !== bot.username)
+              .sort((a, b) => bot.entity.position.distanceTo(a.position) - bot.entity.position.distanceTo(b.position))
+              .at(0);
+          if (!target) {
+            return bot.efly.clearState();
+          };
+
+          const targetPosition = target.position;
+          const xzDistance = bot.entity.position.xzDistanceTo(targetPosition);
+          const dy = targetPosition.y - bot.entity.position.y;
+
+          bot.efly.setState('forward', false);
+          await bot.lookAt(targetPosition, true);
+          bot.efly.setState('forward', xzDistance > 6 && xzDistance < 200);
+          bot.efly.setState('up', dy > 3);
+          bot.efly.setState('down', dy < -3);
+        }, 50);
+        // const updateInterval = setInterval(() => { const target = bot.players['Manue__l']?.entity?.position; if (!target) return bot.efly.setState('forward', false); bot.lookAt(target, true); bot.efly.setState('forward', bot.entity.position.xzDistanceTo(target) > 6); }, 50);
+
+        const onElytraFlightListener: BotEvents['elytraFlight'] = (isFlying) => {
+          if (!isFlying) {
+            clearInterval(updateInterval);
+            bot.off('elytraFlight', onElytraFlightListener);
+
+            bot.efly.clearState();
+          }
+        };
+        bot.on('elytraFlight', onElytraFlightListener);
       } break;
     }
   }
