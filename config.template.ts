@@ -4,6 +4,7 @@ import { Vec3 } from 'vec3';
 import { TaskGrabItemsFromChestAndClose } from './src/tasks/chest/taskGrabItemsFromChestAndClose';
 import { TaskList } from './src/tasks/taskList';
 import { TaskGetWritableBook } from './src/tasks/items/taskGetWritableBook';
+import { TaskRandom } from './src/tasks/taskRandom';
 
 export const notificationOptions: NotificationOptions = {
   enabled: true,
@@ -52,6 +53,14 @@ const taskDefinitions: TaskDefinition[] = [
       new TaskGrabItemsFromChestAndClose(chestPositions.tools),
       new TaskGrabItemsFromChestAndClose(chestPositions.trees),
     ], { delay: 50 }),
+  },
+
+  {
+    names: ['random', 'surprise'],
+    task: new TaskRandom(
+      Object.values(chestPositions)
+        .map(chestPosition => new TaskGrabItemsFromChestAndClose(chestPosition))
+    ),
   },
 ];
 
