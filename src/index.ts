@@ -28,6 +28,7 @@ import { chestPositions } from '../config';
 import { TaskEnsureNearBlock } from './tasks/chest/taskEnsureNearBlock';
 import { eflyPlugin } from './plugins/eflyPlugin';
 import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
+import { TaskBedrockTP } from './tasks/game/taskBedrockTP';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -245,6 +246,14 @@ function createBot() {
           }
         };
         bot.on('elytraFlight', onElytraFlightListener);
+      } break;
+
+      case 'voidtp':
+      case 'bedrocktp': {
+        if (username !== 'Manue__l') return;
+
+        bot.TPYTask.set(username, new TaskBedrockTP());
+        bot.chat(`/tpa ${username}`);
       } break;
     }
   }
