@@ -258,7 +258,7 @@ function createBot() {
     }
   }
 
-  bot.on('outgoingTPaccepted', async (to) => {
+  bot.on('outgoingTPdone', async (to) => {
     await sleep(50);
 
     let died = false;

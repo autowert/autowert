@@ -38,6 +38,15 @@ export const chatPatternsPlugin: BotPlugin = (bot) => {
     if (outgoingTPtimeoutMatch && outgoingTPtimeoutMatch[1])
       bot.emit('outgoingTPtimeout', outgoingTPtimeoutMatch[1]);
 
+    const outgoingTPdoneMatch = /^Teleported to ([A-Za-z0-9_]+)!$/.exec(msg);
+    if (outgoingTPdoneMatch && outgoingTPdoneMatch[1])
+      bot.emit('outgoingTPdone', outgoingTPdoneMatch[1]);
+
+    // TODO: send outgoing tp failed or incoming tp failed
+    const teleportFailedMatch = /^Teleport failed!$/.exec(msg);
+    if (teleportFailedMatch)
+      bot.emit('teleportFailed');
+
     // const suicideFailedMatch = /^Sorry, Death is too busy at the moment\. Please try again later\.\.\.$/.exec(msg);
     const suicideFailedMatch = /^(?:&c)?Sorry, Death is too busy at the moment\. Please try again later\.\.\.(?:&r)?$/.exec(msg);
     if (suicideFailedMatch)
@@ -59,6 +68,7 @@ declare module 'mineflayer' {
     outgoingTPtimeout: (to: string) => Promise<void> | void;
     outgoingTPdone: (to: string) => Promise<void> | void;
 
+    teleportFailed: () => Promise<void> | void;
     suicideFailed: () => Promise<void> | void;
   }
 }
