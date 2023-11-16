@@ -27,6 +27,7 @@ import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPl
 import { chestPositions } from '../config';
 import { TaskEnsureNearBlock } from './tasks/chest/taskEnsureNearBlock';
 import { eflyPlugin } from './plugins/eflyPlugin';
+import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -48,6 +49,7 @@ const botOptions: BotOptions = {
     useWritableBookPlugin,
     playerNearNotificationPlugin,
     eflyPlugin,
+    setTPYTaskPlugin,
   },
 
   logOptions: {
@@ -162,6 +164,7 @@ function createBot() {
 
       case 'kits':
       case 'list': {
+        bot.TPYTask.set(username, new TaskWriteHelpBook(username));
         bot.kitStore.giveKit(username, 'help');
       } break;
 
@@ -249,15 +252,26 @@ function createBot() {
   bot.on('outgoingTPaccepted', async (to) => {
     await sleep(50);
 
-    if (bot.hasWritableBookInInventory()) {
-      try {
+    let died = false;
+    const deathListener: BotEvents['death'] = () => { died = true; };
+    bot.once('death', deathListener);
+
+    try {
+      if (bot.TPYTask.has(to)) {
+        console.log(`executing TPY task for ${to}`);
+
+        await bot.TPYTask.execute(to);
+      } else if (bot.hasWritableBookInInventory()) {
+        console.log('no TPY task, but bot has writable book, so writing a help book anyway');
+
         await new TaskWriteHelpBook(to).execute(bot);
-      } catch {
-        console.warn('failed to write help book');
       }
+    } catch (err) {
+      console.warn('failed to execute TPY task', err);
     }
 
-    bot.chat('/kill');
+    bot.off('death', deathListener);
+    if (!died) bot.chat('/kill');
   });
 
   bot.once('end', (reason) => {
