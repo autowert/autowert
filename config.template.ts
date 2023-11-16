@@ -31,6 +31,29 @@ export const chestPositions = {
   // ...
 } as const;
 
+const concretePositions = {
+  black: getPosition(10, 0),
+  pink: getPosition(10, 1),
+  magenta: getPosition(10, 2),
+  // ...
+} as const;
+function getConcreteTaskDefinitions(): TaskDefinition[] {
+  const concreteTaskDefinitions = [];
+
+  for (const [color, chestPosition] of Object.entries(concretePositions)) {
+    // TODO: remove color from names
+    const names = [`${color}-concrete`, `${color}_concrete`, color];
+    const task = new TaskGrabItemsFromChestAndClose(chestPosition);
+
+    concreteTaskDefinitions.push({
+      names,
+      task,
+    });
+  }
+
+  return concreteTaskDefinitions;
+}
+
 const defaultTaskDefinition: TaskDefinition | false = {
   names: ['pvp'],
 }; // can be false to not give a default kit
@@ -54,6 +77,8 @@ const taskDefinitions: TaskDefinition[] = [
       new TaskGrabItemsFromChestAndClose(chestPositions.trees),
     ], { delay: 50 }),
   },
+
+  ...getConcreteTaskDefinitions(),
 
   {
     names: ['random', 'surprise'],
