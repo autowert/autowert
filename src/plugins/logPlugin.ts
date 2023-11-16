@@ -99,6 +99,10 @@ export const logPlugin: BotPlugin = (bot, botOptions) => {
     bot.on('outgoingTPtimeout', (to) => console.log(`The tp request to ${to} timed out.`));
     bot.on('outgoingTPdone', (to) => console.log(`Teleported to ${to}.`));
   }
+
+  if (logOptions.tpIncoming || logOptions.tpOutgoing) {
+    bot.on('teleportFailed', () => console.log(`Teleport failed.`))
+  }
 };
 
 type LogOptions = typeof defaultOptions;
