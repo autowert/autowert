@@ -24,7 +24,7 @@ import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
 import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
 import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPlugin';
-import { chestPositions } from '../config';
+import { opKitChestPositions } from '../config';
 import { TaskEnsureNearBlock } from './tasks/chest/taskEnsureNearBlock';
 import { eflyPlugin } from './plugins/eflyPlugin';
 import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
@@ -79,6 +79,7 @@ function createBot() {
   });
 
   bot.on('incomingTPrequest', async (from) => {
+    // TODO: USE UUIDS (VERY IMPORTANT)
     if (from === 'Manue__l') bot.chat('/tpy Manue__l');
     else if (from === 'GoogleComStuff') {
       if (!bot.players['Manue__l']) {
@@ -172,8 +173,10 @@ function createBot() {
       case 'opkit': {
         if (username !== 'Manue__l') return;
 
+        // TODO: use task
+
         const kit = args[0]?.toLowerCase();
-        const chestPos = (chestPositions as any)[kit] as Vec3 | undefined;
+        const chestPos = (opKitChestPositions as any)[kit] as Vec3 | undefined;
         if (!kit || !chestPos) return bot.chat('/w ' + username + ' usage: opkit <kitname>');
 
         await new TaskEnsureNearBlock(chestPos, 6).execute(bot);

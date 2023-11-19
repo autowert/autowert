@@ -54,6 +54,11 @@ function getConcreteTaskDefinitions(): TaskDefinition[] {
   return concreteTaskDefinitions;
 }
 
+export const opKitChestPositions: Record<string, Vec3 | undefined> = {
+  ...chestPositions,
+  ...concretePositions,
+};
+
 const defaultTaskDefinition: TaskDefinition | false = {
   names: ['pvp'],
 }; // can be false to not give a default kit
