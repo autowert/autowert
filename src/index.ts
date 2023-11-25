@@ -29,6 +29,7 @@ import { TaskEnsureNearBlock } from './tasks/chest/taskEnsureNearBlock';
 import { eflyPlugin } from './plugins/eflyPlugin';
 import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
 import { TaskBedrockTP } from './tasks/game/taskBedrockTP';
+import { TaskTryBuildPortal } from './tasks/game/taskTryBuildPortal';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -81,7 +82,7 @@ function createBot() {
   bot.on('incomingTPrequest', async (from) => {
     // TODO: USE UUIDS (VERY IMPORTANT)
     if (from === 'Manue__l') bot.chat('/tpy Manue__l');
-    else if (from === 'GoogleComStuff') {
+    /* else if (from === 'GoogleComStuff') {
       if (!bot.players['Manue__l']) {
         console.log(from, 'wants to tp, but Manue__l is offline');
 
@@ -114,7 +115,8 @@ function createBot() {
       }
 
       bot.chat('/tpy GoogleComStuff');
-    }
+    } */
+    else if (from === 'GoogleComStuff') bot.chat('/tpy GoogleComStuff');
   });
 
   bot.on('death', () => {
@@ -256,6 +258,15 @@ function createBot() {
         if (username !== 'Manue__l') return;
 
         bot.TPYTask.set(username, new TaskBedrockTP());
+        bot.chat(`/tpa ${username}`);
+      } break;
+
+      case 'portal': {
+        if (username !== 'Manue__l') return;
+
+        // TODO: get obsidian and flint and steal
+
+        bot.TPYTask.set(username, new TaskTryBuildPortal());
         bot.chat(`/tpa ${username}`);
       } break;
     }
