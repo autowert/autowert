@@ -12,6 +12,12 @@ export const notificationOptions: NotificationOptions = {
   topic: 'example-bot-topic',
 };
 
+// credentials for the dashboard, only to be used as the last resort
+export const dashCredentials = {
+  username: 'user',
+  password: '1234',
+};
+
 // shulker, chest or double chest with feathers, ink sacks and books
 export const bookMaterialsChestPosition = new Vec3(0, 0, 0);
 
