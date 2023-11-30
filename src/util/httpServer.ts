@@ -62,9 +62,67 @@ app.use(async (ctx, next) => {
   if (ctx.method === 'GET') {
     ctx.set('Content-Type', 'text/html');
     ctx.body = `
-<h1>secret website</h1>
-<textarea id="execute"></textarea>
-<button onclick="btn = this; btn.disabled = true; fetch('.dash', { method: 'POST', body: document.querySelector('#execute').value }).then(res => res.text(), res => res.text()).then(text => { alert(text); btn.disabled = false; })">execute</button>
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Secret Website</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.1/codemirror.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.1/codemirror.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.1/mode/javascript/javascript.min.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    #codeMirror {
+      outline: solid 1px black;
+      box-sizing: border-box;
+    }
+    button {
+      margin: 0.5rem;
+      float: right;
+    }
+  </style>
+</head>
+
+<body>
+	<h1>Secret Website</h1>
+	<textarea id="execute" style="display: none;"></textarea>
+	<div id="codeMirror"></div>
+	<button onclick="executeCode()">Execute</button>
+
+	<script>
+		// Initialize CodeMirror
+    var editor = CodeMirror(document.getElementById("codeMirror"), {
+      mode: "javascript",
+      lineNumbers: true,
+      theme: "default"
+    });
+
+    // Function to execute the code
+    function executeCode() {
+      var code = editor.getValue();
+      var btn = document.querySelector('button');
+      btn.disabled = true;
+
+      fetch('.dash', {
+        method: 'POST',
+        body: code
+      }).then(
+        res => res.text(),
+        res => res.text()
+      ).then(
+        text => {
+          alert(text);
+          btn.disabled = false;
+        }
+      );
+    }
+	</script>
+</body>
+
+</html>
 `.slice(1, -1);
   } else if (ctx.method === 'POST') {
     const code = ctx.request.body as any;
