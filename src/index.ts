@@ -255,7 +255,7 @@ function createBot() {
 
       case 'voidtp':
       case 'bedrocktp': {
-        if (username !== 'Manue__l') return;
+        if (username !== 'Manue__l' && username !== 'GoogleComStuff') return;
 
         bot.TPYTask.set(username, new TaskBedrockTP());
         bot.chat(`/tpa ${username}`);
