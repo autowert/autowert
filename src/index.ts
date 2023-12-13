@@ -30,6 +30,7 @@ import { eflyPlugin } from './plugins/eflyPlugin';
 import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
 import { TaskBedrockTP } from './tasks/game/taskBedrockTP';
 import { TaskTryBuildPortal } from './tasks/game/taskTryBuildPortal';
+import { getPlayerTimeStatsPlugin } from './plugins/getPlayerTimeStatsPlugin';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -52,6 +53,7 @@ const botOptions: BotOptions = {
     playerNearNotificationPlugin,
     eflyPlugin,
     setTPYTaskPlugin,
+    getPlayerTimeStatsPlugin,
   },
 
   logOptions: {
