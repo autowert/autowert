@@ -47,8 +47,8 @@ export class TaskEnsureNearBlock extends Task {
       const newHeadBlock = bot.blockAt(newPosition.offset(0, 1, 0));
 
       const canWalk =
-        newFeetBlock && newFeetBlock.name === 'air' &&
-        newHeadBlock && newHeadBlock.name === 'air';
+        newFeetBlock && newFeetBlock.boundingBox === 'empty' &&
+        newHeadBlock && newHeadBlock.boundingBox === 'empty';
       if (!canWalk) continue;
 
       const newDistance = getDistance(newPosition);
