@@ -175,7 +175,7 @@ function createBot() {
       } break;
 
       case 'opkit': {
-        if (username !== 'Manue__l') return;
+        if (username !== 'Manue__l' && username !== 'GoogleComStuff') return;
 
         // TODO: use task
 
