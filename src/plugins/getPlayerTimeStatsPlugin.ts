@@ -15,7 +15,7 @@ function parseTimeStr(timeStr: string): number {
 
   for (const part of parts) {
     const match = /(\d+)\s(\w+)/.exec(part);
-    if (!match || match.length !== 3) throw new Error('invalid time string (part not valid)');
+    if (!match || match.length !== 3) throw new Error('invalid time string (part not valid): ' + part);
 
     const amount = Number(match[1]);
     const unit = match[2].endsWith('s') ? match[2] : match[2] + 's';
@@ -46,11 +46,15 @@ export const getPlayerTimeStatsPlugin: BotPlugin = (bot) => {
     const jdStr = playerTimeStatsMatch[2];
     const ptStr = playerTimeStatsMatch[3];
 
-    const jd = parseTimeStr(jdStr);
-    const pt = parseTimeStr(ptStr);
+    try {
+      const jd = parseTimeStr(jdStr);
+      const pt = parseTimeStr(ptStr);
 
-    const stats: TimeStats = { username, jd, pt };
-    bot.emit('playerTimeStats', stats);
+      const stats: TimeStats = { username, jd, pt };
+      bot.emit('playerTimeStats', stats);
+    } catch(err) {
+      console.log('error with time string', err, '(username:', username, ')');
+    }
   });
 
   const pending = new Set<string>();
