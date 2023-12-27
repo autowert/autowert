@@ -19,6 +19,7 @@ import { windowInteractionsPlugin } from './plugins/windowInteractionsPlugin';
 
 import { giveKitPlugin } from './plugins/functions/giveKitPlugin';
 import { useWritableBookPlugin } from './plugins/useWritableBookPlugin';
+import { blacklistPlugin } from './plugins/functions/blacklistPlugin';
 
 import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
@@ -54,6 +55,7 @@ const botOptions: BotOptions = {
     eflyPlugin,
     setTPYTaskPlugin,
     getPlayerTimeStatsPlugin,
+    blacklistPlugin,
   },
 
   logOptions: {
@@ -270,6 +272,31 @@ function createBot() {
 
         bot.TPYTask.set(username, new TaskTryBuildPortal());
         bot.chat(`/tpa ${username}`);
+      } break;
+
+      case 'blacklist': {
+        if (username !== 'Manue__l' && username !== 'GoogleComStuff') return;
+
+        const [_target, reason] = args;
+
+        if (!_target)
+          return bot.chat(`/w ${username} Usage: blacklist <username> [reason]`); // TODO: command handler
+
+        const target = Object.keys(bot.players)
+          .find((player) => player.toLowerCase() === _target.toLowerCase());
+
+        if (!target)
+          return bot.chat(`/w ${username} the target username is not online`); // TODO: command handler
+
+        try {
+          const status = await bot.blacklistPlayer(target, reason);
+
+          await sleep(2000);
+          bot.chat(`/w ${username} ${target} is now ${status}.`);
+        } catch (err) {
+          await sleep(2000);
+          bot.chat(`/w ${username} Failed to blacklist ${target}.${err instanceof Error ? ' (' + err.message + ')' : ''}`);
+        }
       } break;
     }
   }

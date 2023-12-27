@@ -51,6 +51,14 @@ export const chatPatternsPlugin: BotPlugin = (bot) => {
     const suicideFailedMatch = /^(?:&c)?Sorry, Death is too busy at the moment\. Please try again later\.\.\.(?:&r)?$/.exec(msg);
     if (suicideFailedMatch)
       bot.emit('suicideFailed');
+
+    const ignoredPlayerMatch = /^Chat messages from ([A-Za-z0-9_]+) will be hidden\.$/.exec(msg);
+    if (ignoredPlayerMatch && ignoredPlayerMatch[1])
+      bot.emit('ignoredPlayer', ignoredPlayerMatch[1]);
+
+    const unignoredPlayerMatch = /^Chat messages from ([A-Za-z0-9_]+) will be shown\.$/.exec(msg);
+    if (unignoredPlayerMatch && unignoredPlayerMatch[1])
+      bot.emit('unignoredPlayer', unignoredPlayerMatch[1]);
   });
 };
 
@@ -70,5 +78,8 @@ declare module 'mineflayer' {
 
     teleportFailed: () => Promise<void> | void;
     suicideFailed: () => Promise<void> | void;
+
+    ignoredPlayer: (username: string) => Promise<void> | void;
+    unignoredPlayer: (username: string) => Promise<void> | void;
   }
 }

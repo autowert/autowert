@@ -2,6 +2,7 @@ node_modules
 dist
 
 latest.log
+data
 
 config*.ts
 !config.template.ts
