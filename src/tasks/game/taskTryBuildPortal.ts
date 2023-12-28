@@ -19,8 +19,6 @@ export class TaskTryBuildPortal extends Task {
       sleep(5000),
     ]);
 
-    await sleep(5000);
-
     const obsidianSlot = bot.inventory.slots.findIndex((slot) => slot && slot.name === 'obsidian');
     if (obsidianSlot === -1) throw new Error('obsidian not found in inventory');
 
@@ -30,6 +28,7 @@ export class TaskTryBuildPortal extends Task {
 
     if (obsidianHotbarSlot !== obsidianSlot) await bot.windowInteractions.swapWithQuickbarSlot(obsidianSlot, obsidianHotbarSlot - 36);
     bot.setQuickBarSlot(obsidianHotbarSlot - 36);
+    await sleep(200);
 
     const possiblePortalPositions = findPortalPosition(bot);
     if (possiblePortalPositions.length === 0) throw new Error('no possible portal positions found');
@@ -37,35 +36,6 @@ export class TaskTryBuildPortal extends Task {
     const portal = possiblePortalPositions.at(0)!;
 
     const portalBlocks = getPortalBlockPositions(portal);
-    /* const setPortalBlocks = new Set(portalBlocks);
-
-    while (setPortalBlocks.size > 0) {
-      const placableBlockPositions = portalBlocks
-        .filter((blockPos) => setPortalBlocks.has(blockPos))
-        .filter((blockPos) => getSolidNeighbourBlockPositions(bot, blockPos).length > 0)
-
-      if (placableBlockPositions.length === 0) throw new Error('not all blocks were placed, but no block can be placed anymore');
-
-      for (const blockToPlacePosition of placableBlockPositions) {
-        // const block = bot.blockAt(blockToPlacePosition);
-        // if (block && block.name === 'obsidian') {
-        setPortalBlocks.delete(blockToPlacePosition);
-        // continue;
-        // }
-
-        const neighbours = getSolidNeighbourBlockPositions(bot, blockToPlacePosition);
-        if (neighbours.length === 0) throw new Error('block with neighbours has no neighbour, wtf');
-
-        for (const neighbour of neighbours) {
-          const [refPos, offset] = neighbour;
-          const refBlock = bot.blockAt(refPos);
-          if (!refBlock) throw new Error('refBlock not defined'); // this should never happen
-
-          bot.placeBlock(refBlock, new Vec3(...offset)).catch(() => console.log('block placement failed'));
-          await sleep(50);
-        }
-      }
-    } */
 
     let iteration = 0;
     while (true) {
@@ -93,7 +63,7 @@ export class TaskTryBuildPortal extends Task {
       }
 
       if (placed === portalBlocks.length) break;
-      if (iteration > 20) throw new Error('failed to build portal with 10 iterations');
+      if (iteration > 20) throw new Error('failed to build portal with 20 iterations');
 
       iteration++;
 
@@ -109,21 +79,18 @@ export class TaskTryBuildPortal extends Task {
 
     if (flintHotbarSlot !== flintSlot) await bot.windowInteractions.swapWithQuickbarSlot(flintSlot, flintHotbarSlot - 36);
     bot.setQuickBarSlot(flintHotbarSlot - 36);
+    await sleep(200);
 
-    const flintRefPos1 = portal.startPosition.x < portal.endPosition.x
-      ? portal.startPosition.offset(1, 0, 0)
-      : portal.startPosition.offset(0, 0, 1);
-    const flintRefBlock1 = bot.blockAt(flintRefPos1);
-    if (!flintRefBlock1) throw new Error('flintRefBlock not found'); // this should also never happen
+    const flintRefPos = portal.startPosition.x === portal.endPosition.x
+      ? portal.startPosition.offset(0, 0, 1)
+      : portal.startPosition.offset(1, 0, 0);
+    const flintRefBlock = bot.blockAt(flintRefPos);
+    if (!flintRefBlock) throw new Error('flintRefBlock not found'); // this should also never happen
 
-    const flintRefPos2 = portal.startPosition.x < portal.endPosition.x
-      ? portal.startPosition.offset(2, 1, 0)
-      : portal.startPosition.offset(0, 0, 2);
-    const flintRefBlock2 = bot.blockAt(flintRefPos2);
-    if (!flintRefBlock2) throw new Error('flintRefBlock not found'); // this should also never happen
+    await bot.placeBlock(flintRefBlock, new Vec3(0, 1, 0))
+      .catch(() => console.log('failed to place flint block'));
 
-    bot.placeBlock(flintRefBlock1, new Vec3(0, 1, 0)).catch(() => console.log('failed to place flint block'));
-    bot.placeBlock(flintRefBlock2, new Vec3(0, 1, 0)).catch(() => console.log('failed to place flint block'));
+    await sleep(100);
   }
 }
 

@@ -30,6 +30,13 @@ function getPosition(row: number, col: number) {
   return new Vec3(x, y, z);
 }
 
+// chests containing only the item
+export const itemChestPositions = {
+  obsidian: getPosition(-1, 0),
+  flint_and_steel: getPosition(-1, 1),
+  ender_chest: getPosition(-1, 2),
+};
+
 export const chestPositions = {
   pvp: getPosition(0, 0),
   tools: getPosition(0, 1),

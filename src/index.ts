@@ -25,7 +25,7 @@ import { sleep } from './util/sleep';
 import { parseMsg } from './util/parseMsg';
 import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
 import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPlugin';
-import { opKitChestPositions } from '../config';
+import { opKitChestPositions, itemChestPositions } from '../config';
 import { TaskEnsureNearBlock } from './tasks/chest/taskEnsureNearBlock';
 import { eflyPlugin } from './plugins/eflyPlugin';
 import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
@@ -164,6 +164,7 @@ function createBot() {
     const cmdMessage = message.replace(/^\W+/, '');
     const { cmd, args } = parseMsg(cmdMessage);
 
+    // TODO: better error handling
     switch (cmd) {
       case 'kit': {
         const type = args[0]?.toLowerCase();
@@ -266,9 +267,31 @@ function createBot() {
       } break;
 
       case 'portal': {
-        if (username !== 'Manue__l') return;
+        if (username !== 'Manue__l' && username !== 'GoogleComStuff') return;
 
         // TODO: get obsidian and flint and steal
+        for (const itemChestPosition of [itemChestPositions.obsidian, itemChestPositions.flint_and_steel]) {
+          await new TaskEnsureNearBlock(itemChestPosition, 6).execute(bot);
+
+          const chestBlock = bot.blockAt(itemChestPosition)!;
+          const chest = await bot.openChest(chestBlock);
+
+          const itemSlot = chest.slots.findIndex((item, slot) => {
+            if (!item) return;
+            if (slot >= chest.inventoryStart) return;
+
+            if (item) return true;
+          });
+
+          try {
+            await bot.windowInteractions.shiftLeftClick(itemSlot);
+          } catch (err) {
+            console.log('portal: shift left click failed', err);
+          }
+
+          await chest.close();
+          await sleep(100);
+        }
 
         bot.TPYTask.set(username, new TaskTryBuildPortal());
         bot.chat(`/tpa ${username}`);
