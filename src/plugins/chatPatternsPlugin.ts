@@ -2,6 +2,10 @@ import type { Plugin as BotPlugin } from 'mineflayer';
 
 export const chatPatternsPlugin: BotPlugin = (bot) => {
   bot.on('messagestr', (msg) => {
+    const walkToSpeakMatch = /^Walk a block to speak in chat\.$/.exec(msg);
+    if (walkToSpeakMatch)
+      bot.emit('walkToSpeak');
+
     const incomingTPrequestMatch = /^Type \/tpy ([A-Za-z0-9_]+) to accept or \/tpn \1 to deny\.$/.exec(msg);
     if (incomingTPrequestMatch && incomingTPrequestMatch[1])
       bot.emit('incomingTPrequest', incomingTPrequestMatch[1]);
@@ -64,6 +68,8 @@ export const chatPatternsPlugin: BotPlugin = (bot) => {
 
 declare module 'mineflayer' {
   interface BotEvents {
+    walkToSpeak: () => Promise<void> | void;
+
     incomingTPrequest: (from: string) => Promise<void> | void;
     incomingTPaccepted: (from: string) => Promise<void> | void;
     incomingTPdenied: (from: string) => Promise<void> | void;

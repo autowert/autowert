@@ -4,13 +4,13 @@ import { Vec3 } from 'vec3';
 
 type Direction = 'north' | 'east' | 'south' | 'west';
 type Offset = [number, number, number];
-const directionOffsets: Record<Direction, Offset> = {
+export const directionOffsets: Record<Direction, Offset> = {
   north: [0, 0, -1],
   east: [1, 0, 0],
   south: [0, 0, 1],
   west: [-1, 0, 0],
 };
-const directionYaws: Record<Direction, number> = {
+export const directionYaws: Record<Direction, number> = {
   /* north: -180,
   east: -90,
   south: 0,
