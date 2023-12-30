@@ -33,14 +33,20 @@ export const advertisingPlugin: BotPlugin = (bot) => {
     let nextAd = Date.now() + random(MIN_DELAY, MAX_DELAY);
 
     while (!bot._client.ended) {
-      if (Date.now() <= nextAd) {
+      if (Date.now() >= nextAd) {
         // prevent ads when the server is inactive
         if (messages < 40) {
+          console.log('sending ad, but not enough messages, trying later', `${messages} / 40`);
+
           nextAd += random(0, MIN_DELAY);
           continue;
         }
 
-        bot.chat(getAd());
+        const ad = getAd();
+
+        console.log('sending ad:', ad);
+        bot.chat(ad);
+        
         nextAd = Date.now() + random(MIN_DELAY, MAX_DELAY);
         messages = 0;
       }

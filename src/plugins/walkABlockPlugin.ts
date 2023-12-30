@@ -29,14 +29,18 @@ export const walkABlockPlugin: BotPlugin = (bot) => {
       if (timesWalked >= 2) break;
     }
 
-    if (timesWalked > 0) bot.emit('canSpeak');
-    else {
+    if (timesWalked > 0) {
+      console.log('bot walked a block, can speak now');
+      bot.emit('canSpeak');
+    } else {
       // throw new Error('failed to walk a block');
       console.warn('Failed to walk a block');
     }
   }
 
   bot.once('mainServer', () => {
+    walkABlock();
+
     bot.on('spawn', walkABlock);
     bot.on('walkToSpeak', walkABlock);
   });
