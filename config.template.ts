@@ -6,6 +6,8 @@ import { TaskList } from './src/tasks/taskList';
 import { TaskGetWritableBook } from './src/tasks/items/taskGetWritableBook';
 import { TaskRandom } from './src/tasks/taskRandom';
 
+export const discordInvite = 'https://discord.gg/dVJFqbjc66';
+
 export const notificationOptions: NotificationOptions = {
   enabled: true,
   instance: 'https://ntfy.sh/',
