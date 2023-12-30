@@ -9,6 +9,8 @@ const defaultOptions = {
   kicked: true,
   chat: false,
 
+  walkToSpeak: true,
+
   tpIncoming: true,
   tpOutgoing: true,
 };
@@ -68,6 +70,12 @@ export const logPlugin: BotPlugin = (bot, botOptions) => {
   if (logOptions.chat) {
     bot.on('message', (msg) => {
       console.log(msg.toAnsi());
+    });
+  }
+
+  if (logOptions.walkToSpeak) {
+    bot.on('walkToSpeak', () => {
+      console.log('bot has to walk a block to speak');
     });
   }
 

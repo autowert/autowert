@@ -32,15 +32,14 @@ export const walkABlockPlugin: BotPlugin = (bot) => {
     if (timesWalked > 0) bot.emit('canSpeak');
     else {
       // throw new Error('failed to walk a block');
-      console.warn('Failed to walk a block, retrying on spawn');
-
-      bot.off('spawn', walkABlock); // hopefully prevents duplicate listeners
-      bot.once('spawn', walkABlock);
+      console.warn('Failed to walk a block');
     }
   }
 
-  bot.once('mainServer', walkABlock);
-  bot.on('walkToSpeak', walkABlock);
+  bot.once('mainServer', () => {
+    bot.on('spawn', walkABlock);
+    bot.on('walkToSpeak', walkABlock);
+  });
 };
 
 declare module 'mineflayer' {
