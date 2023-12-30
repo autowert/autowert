@@ -22,7 +22,7 @@ Source code is on my Discord: ${blueChar}${discordInvite}
   .replace(/^/gm, msgColorChar)
   .split('\n');
 function getAd(): string {
-  return 'hi';
+  return ads[random(0, ads.length - 1)];
 }
 
 export const advertisingPlugin: BotPlugin = (bot) => {
