@@ -304,7 +304,8 @@ function createBot() {
       case 'blacklist': {
         if (username !== 'Manue__l' && username !== 'GoogleComStuff') return;
 
-        const [_target, reason] = args;
+        const [_target, ..._reason] = args;
+        const reason = _reason.join(' ');
 
         if (!_target)
           return bot.chat(`/w ${username} Usage: blacklist <username> [reason]`); // TODO: command handler
