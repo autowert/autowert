@@ -190,7 +190,7 @@ function createBot() {
         const chestPos = (opKitChestPositions as any)[kit] as Vec3 | undefined;
         if (!kit || !chestPos) return bot.chat('/w ' + username + ' usage: opkit <kitname>');
 
-        await new TaskEnsureNearBlock(chestPos, 6).execute(bot);
+        await new TaskEnsureNearBlock(chestPos, 5.5).execute(bot);
 
         const chestBlock = bot.blockAt(chestPos);
         if (!chestBlock) return;
@@ -275,7 +275,7 @@ function createBot() {
 
         // TODO: get obsidian and flint and steal
         for (const itemChestPosition of [itemChestPositions.obsidian, itemChestPositions.flint_and_steel]) {
-          await new TaskEnsureNearBlock(itemChestPosition, 6).execute(bot);
+          await new TaskEnsureNearBlock(itemChestPosition, 5.5).execute(bot);
 
           const chestBlock = bot.blockAt(itemChestPosition)!;
           const chest = await bot.openChest(chestBlock);

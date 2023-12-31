@@ -23,7 +23,7 @@ export class TaskGetWritableBook extends Task {
 
     const chestPos = this.materialsChestPosition;
 
-    await new TaskEnsureNearBlock(chestPos, 6).execute(bot);
+    await new TaskEnsureNearBlock(chestPos, 5.5).execute(bot);
 
     const chestBlock = bot.blockAt(chestPos);
     if (!chestBlock) throw new Error('book chest block not found');
