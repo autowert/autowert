@@ -170,7 +170,7 @@ function findPortalPosition(bot: Bot, size = { width: 4, height: 5 }) {
 }
 
 // TODO: this needs to be in src/plugins and extend the bot
-function getSolidNeighbourBlockPositions(bot: Bot, position: Vec3): [Vec3, Offset][] {
+export function getSolidNeighbourBlockPositions(bot: Bot, position: Vec3): [Vec3, Offset][] {
   const offsetPositions: [Vec3, Offset][] = [];
 
   for (const offset of offsets) {

@@ -34,6 +34,7 @@ import { TaskTryBuildPortal } from './tasks/game/taskTryBuildPortal';
 import { getPlayerTimeStatsPlugin } from './plugins/getPlayerTimeStatsPlugin';
 import { walkABlockPlugin } from './plugins/walkABlockPlugin';
 import { advertisingPlugin } from './plugins/advertisingPlugin';
+import { TaskPlaceEchest } from './tasks/game/taskPlaceEchest';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -298,6 +299,35 @@ function createBot() {
         }
 
         bot.TPYTask.set(username, new TaskTryBuildPortal());
+        bot.chat(`/tpa ${username}`);
+      } break;
+
+      case 'echest': {
+        if (username !== 'Manue__l' && username !== 'GoogleComStuff') return;
+
+        const echestItemChestPosition = itemChestPositions.ender_chest;
+
+        await new TaskEnsureNearBlock(echestItemChestPosition, 5.5).execute(bot);
+        const chestBlock = bot.blockAt(echestItemChestPosition)!;
+        const chest = await bot.openChest(chestBlock);
+
+        const itemSlot = chest.slots.findIndex((item, slot) => {
+          if (!item) return;
+          if (slot >= chest.inventoryStart) return;
+
+          if (item) return true;
+        });
+
+        try {
+          await bot.windowInteractions.shiftLeftClick(itemSlot);
+        } catch (err) {
+          console.log('echest: shift left click failed', err);
+        }
+
+        await chest.close();
+        await sleep(100);
+
+        bot.TPYTask.set(username, new TaskPlaceEchest());
         bot.chat(`/tpa ${username}`);
       } break;
 
