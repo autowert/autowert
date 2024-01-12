@@ -4,6 +4,7 @@ import { once } from 'events';
 import mineflayer, { BotEvents, type BotOptions } from 'mineflayer';
 import { Vec3 } from 'vec3';
 
+import axios from 'axios';
 import df from 'dateformat';
 
 import './util/persistentLog'
@@ -35,6 +36,8 @@ import { getPlayerTimeStatsPlugin } from './plugins/getPlayerTimeStatsPlugin';
 import { walkABlockPlugin } from './plugins/walkABlockPlugin';
 import { advertisingPlugin } from './plugins/advertisingPlugin';
 import { TaskPlaceEchest } from './tasks/game/taskPlaceEchest';
+import { TaskGetWritableBook } from './tasks/items/taskGetWritableBook';
+import { TaskCustomFunction } from './tasks/taskCustomFunction';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -356,6 +359,76 @@ function createBot() {
           bot.chat(`/w ${username} Failed to blacklist ${target}.${err instanceof Error ? ' (' + err.message + ')' : ''}`);
         }
       } break;
+
+      case 'lyrics': {
+        if (username !== 'Manue__l' && username !== 'GoogleComStuff') return;
+
+        // TODO: task
+        const MAX_CHARS = 19;
+        const MAX_LINES = 14;
+
+        if (!args.length) return bot.chat(`/w ${username} Usage: lyrics <title> [from <author>]`)
+
+        const [title, artist] = args.join(' ').split(/from/i);
+
+        const apiUrl = `https://lyrist.vercel.app/api/${encodeURIComponent(title)}${artist ? '/' + encodeURIComponent(artist) : ''}`;
+        const lyricsPromise = axios.get(apiUrl); // request is awaited when they accepted the tp request
+
+        if (!bot.hasWritableBookInInventory())
+          await new TaskGetWritableBook().execute(bot);
+
+        bot.TPYTask.set(username, new TaskCustomFunction(async (bot) => {
+          const { data: song } = await lyricsPromise;
+          if (!song || !song.lyrics) throw new Error('no lyrics found');
+
+          const text: string = song.lyrics;
+
+          const headlines: string[] = text.match(/\[.+?\]/g) || [];
+          const parts = text.split(/\[.+?\]/);
+
+          if (parts[0]) headlines.unshift('');
+          else parts.shift();
+
+          const pages: string[] = [];
+          for (const [index, part] of parts.entries()) {
+            const headline = headlines[index];
+
+            const lines: string[] = [
+              headline,
+              ...part.split('\n').filter(Boolean),
+            ];
+
+            let totalLines = 0;
+            let page = [];
+
+            for (const line of lines) {
+              const lineCount = Math.ceil(line.length / MAX_CHARS);
+              totalLines += lineCount;
+
+              if (totalLines > MAX_LINES) {
+                pages.push(page.join('\n'));
+
+                totalLines = lineCount;
+                page = [];
+              }
+
+              page.push(line);
+            }
+            if (page.length) pages.push(page.join('\n'));
+          }
+
+          const shouldSign = pages.length <= 15;
+          const title = `${song.title} (${song.artist})`;
+          if (!shouldSign) pages.unshift(title);
+
+          await bot.useWritableBook(
+            pages.map((page) => page.replace(/[^ -~\näöü]/gi, '*')),
+            shouldSign ? title.replace(/[^ -~\näöü]/gi, '*') || 'lyrics' : null,
+            { drop: true }
+          );
+        }));
+        bot.chat(`/tpa ${username}`);
+      } break;
     }
   }
 
@@ -399,6 +472,7 @@ Object.assign(global, {
   Vec3,
   mineflayer,
   getTotalStacks,
+  TaskGetWritableBook,
 });
 
 const debuggerEnabled = process.execArgv.includes('--inspect');
