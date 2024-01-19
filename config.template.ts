@@ -46,6 +46,10 @@ export const chestPositions = {
   // ...
 } as const;
 
+export const opKitChestPositions: Record<string, Vec3 | undefined> = {
+  ...chestPositions,
+};
+
 const getColorPosition = (row: number, col: number): [number, number] => [row, col];
 const colorPositions = {
   black: getColorPosition(0, 0),
@@ -77,6 +81,8 @@ function getColorTaskDefinitions(name: string, colorOffset: number[], colorPosit
     const names = [`${color}-${name}`, `${color}_${name}`];
     const task = new TaskGrabItemsFromChestAndClose(chestPosition);
 
+    opKitChestPositions[names[0]] = chestPosition;
+
     colorTaskDefinitions.push({
       names,
       task,
@@ -87,11 +93,6 @@ function getColorTaskDefinitions(name: string, colorOffset: number[], colorPosit
 
   return colorTaskDefinitions;
 }
-
-export const opKitChestPositions: Record<string, Vec3 | undefined> = {
-  ...chestPositions,
-  // TODO: fix colors
-};
 
 const defaultTaskDefinition: TaskDefinition | false = {
   names: ['pvp'],
