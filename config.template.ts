@@ -46,32 +46,51 @@ export const chestPositions = {
   // ...
 } as const;
 
-const concretePositions = {
-  black: getPosition(10, 0),
-  pink: getPosition(10, 1),
-  magenta: getPosition(10, 2),
+const getColorPosition = (row: number, col: number): [number, number] => [row, col];
+const colorPositions = {
+  black: getColorPosition(0, 0),
+  pink: getColorPosition(0, 1),
+  magenta: getColorPosition(0, 2),
   // ...
-} as const;
-function getConcreteTaskDefinitions(): TaskDefinition[] {
-  const concreteTaskDefinitions = [];
+};
+const colorEmpty1 = getColorPosition(4, 2);
+const colorEmpty2 = getColorPosition(5, 2);
 
-  for (const [color, chestPosition] of Object.entries(concretePositions)) {
-    // TODO: remove color from names
-    const names = [`${color}-concrete`, `${color}_concrete`, color];
+const concreteOffset = [0, 0, 0];
+const concretePositions = {
+  ...colorPositions,
+};
+
+const terracottaOffset = [0, 0, 0];
+const terracottaPositions = {
+  ...colorPositions,
+  plain: colorEmpty1,
+};
+
+function getColorTaskDefinitions(name: string, colorOffset: number[], colorPositions: Record<string, [number, number]>): TaskDefinition[] {
+  const colorTaskDefinitions: TaskDefinition[] = [];
+
+  for (const [color, pos] of Object.entries(colorPositions)) {
+    const chestPosition = getPosition(pos[0], pos[1])
+      .offset(colorOffset[0], colorOffset[1], colorOffset[2]);
+
+    const names = [`${color}-${name}`, `${color}_${name}`];
     const task = new TaskGrabItemsFromChestAndClose(chestPosition);
 
-    concreteTaskDefinitions.push({
+    colorTaskDefinitions.push({
       names,
       task,
+
+      hideFromHelp: true,
     });
   }
 
-  return concreteTaskDefinitions;
+  return colorTaskDefinitions;
 }
 
 export const opKitChestPositions: Record<string, Vec3 | undefined> = {
   ...chestPositions,
-  ...concretePositions,
+  // TODO: fix colors
 };
 
 const defaultTaskDefinition: TaskDefinition | false = {
@@ -98,7 +117,8 @@ const taskDefinitions: TaskDefinition[] = [
     ], { delay: 50 }),
   },
 
-  ...getConcreteTaskDefinitions(),
+  ...getColorTaskDefinitions('concrete', concreteOffset, concretePositions),
+  ...getColorTaskDefinitions('terracotta', terracottaOffset, terracottaPositions),
 
   {
     names: ['random', 'surprise'],
