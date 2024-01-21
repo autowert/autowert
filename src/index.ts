@@ -38,6 +38,7 @@ import { advertisingPlugin } from './plugins/advertisingPlugin';
 import { TaskPlaceEchest } from './tasks/game/taskPlaceEchest';
 import { TaskGetWritableBook } from './tasks/items/taskGetWritableBook';
 import { TaskCustomFunction } from './tasks/taskCustomFunction';
+import { commandHandlerPlugin } from './plugins/commandHandlerPlugin';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -64,6 +65,7 @@ const botOptions: BotOptions = {
     blacklistPlugin,
     walkABlockPlugin,
     advertisingPlugin,
+    commandHandlerPlugin,
   },
 
   logOptions: {

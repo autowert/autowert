@@ -5,6 +5,9 @@ import { TaskGrabItemsFromChestAndClose } from './src/tasks/chest/taskGrabItemsF
 import { TaskList } from './src/tasks/taskList';
 import { TaskGetWritableBook } from './src/tasks/items/taskGetWritableBook';
 import { TaskRandom } from './src/tasks/taskRandom';
+import { Prefix } from './src/commands/BaseCommand';
+
+export const prefix: Prefix = '?';
 
 export const discordInvite = 'https://discord.gg/dVJFqbjc66';
 
