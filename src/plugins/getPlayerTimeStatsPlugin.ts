@@ -10,6 +10,9 @@ const units = {
 function parseTimeStr(timeStr: string): number {
   let totalTime = 0;
 
+  if (timeStr === 'now')
+    return totalTime;
+
   const parts = timeStr.match(/(\d+)\s(\w+)/g);
   if (!parts) throw new Error('invalid time string (no part match): ' + timeStr)
 
