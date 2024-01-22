@@ -8,6 +8,7 @@ import { voidtpCommand } from './voidtpCommand';
 import { portalCommand } from './portalCommand';
 import { echestCommand } from './echestCommand';
 import { lyricsCommand } from './lyricsCommand';
+import { topCommand } from './topCommand';
 
 export const commands: BaseCommand[] = [
   kitCommand,
@@ -21,4 +22,6 @@ export const commands: BaseCommand[] = [
   portalCommand,
   echestCommand,
   lyricsCommand,
+
+  topCommand,
 ];
