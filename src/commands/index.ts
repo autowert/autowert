@@ -9,6 +9,7 @@ import { portalCommand } from './portalCommand';
 import { echestCommand } from './echestCommand';
 import { lyricsCommand } from './lyricsCommand';
 import { topCommand } from './topCommand';
+import { nextncCommand } from './nextncCommand';
 
 export const commands: BaseCommand[] = [
   kitCommand,
@@ -24,4 +25,5 @@ export const commands: BaseCommand[] = [
   lyricsCommand,
 
   topCommand,
+  nextncCommand,
 ];
