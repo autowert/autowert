@@ -8,6 +8,8 @@ import './kitStore';
 import { taskInfos, defaultTaskInfo } from '../../../config';
 
 export const giveKitPlugin: BotPlugin = (bot) => {
+  // TODO: move this to kitCommand
+
   if (!bot.kitStore) bot.kitStore = {} as any;
 
   bot.kitStore.taskInfos = taskInfos;
@@ -25,52 +27,51 @@ export const giveKitPlugin: BotPlugin = (bot) => {
 
   bot.kitStore.totalRequests = new Map<string, number>();
 
-  bot.kitStore.giveKit = async (username, kitName) => {
+  bot.kitStore.getKit = async (username, kitName) => {
     kitName = kitName?.toLowerCase();
 
     if (bot.kitStore.pendingRequests.has(username)) {
       console.log(`pending request to ${username}, not giving a kit. (wanted a ${kitName} kit)`);
-      return;
+      return { success: false };
     }
 
     const userTotalRequests = bot.kitStore.totalRequests.get(username) || 0;
     if (userTotalRequests > 40) {
       console.log(`total kit requests from ${username} this session exceed the maximum of 40 (wanted a ${kitName} kit)`);
-
-      return;
+      return { success: false };
     }
 
     let taskInfo: (typeof bot)['kitStore']['taskInfos'][number];
     if (kitName) {
       const _taskInfo = bot.kitStore.taskInfos.find(
         (taskInfo) => {
-          return taskInfo.names.includes(kitName || '')
+          return taskInfo.names.includes(kitName || '');
         }
       );
 
       if (!_taskInfo) {
         console.log('unknown kit:', kitName, '-', 'not giving a kit.');
-        return;
+        return { success: false };
       }
       taskInfo = _taskInfo;
     } else {
       const _taskInfo = bot.kitStore.defaultTaskInfo;
-      if (!_taskInfo) return; // no default task
+      if (!_taskInfo) return { success: false }; // no default task
       taskInfo = _taskInfo;
     }
 
     console.log(`executing task ${taskInfo.names.at(0) || 'NO NAME WTF?'} (${kitName}) kit to ${username}.`)
     if (taskInfo.isOutOfStock) {
       console.warn('item is out of stock, not giving a kit');
-      return;
+      return { success: false };
     }
 
     bot.kitStore.totalRequests.set(username, userTotalRequests + 1);
 
     const task = taskInfo.task;
     try {
-      await task.execute(bot);
-      bot.chat(`/tpa ${username}`);
+      await task.execute(bot)
+      return { success: true };
     } catch (err) {
       console.log('failed to execute task', task.getName());
       console.log(err);
@@ -81,6 +82,7 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       }
 
       bot.chat('/kill');
+      return { success: false };
     }
   };
 };

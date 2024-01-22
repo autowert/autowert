@@ -19,7 +19,8 @@ export class TPCommand extends ChatCommand {
         if (returnVal.beforeTPTask) await returnVal.beforeTPTask.execute(bot);
         if (returnVal.TPYTask) bot.TPYTask.set(target, returnVal.TPYTask);
 
-        bot.chat('/tpa ' + target);
+        if (returnVal.success !== false)
+          bot.chat('/tpa ' + target);
 
         return returnVal.chatResponse || null;
       },
@@ -36,6 +37,7 @@ export type TPCommandContext = ChatCommandContext & {
 
 export type TPCommandReturnValue = {
   chatResponse?: ChatCommandResponse;
+  success?: false; /* if not set, assume true */
 
   beforeTPTask?: Task;
   TPYTask?: Task;

@@ -13,7 +13,7 @@ declare module 'mineflayer' {
       pendingRequests: Set<string>;
       totalRequests: Map<string, number>;
 
-      giveKit: (username: string, kitName?: string) => Promise<void>;
+      getKit: (username: string, kitName?: string) => Promise<{ success: boolean }>;
     }
   }
 }
