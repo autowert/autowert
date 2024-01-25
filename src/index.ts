@@ -29,6 +29,7 @@ import { walkABlockPlugin } from './plugins/walkABlockPlugin';
 import { advertisingPlugin } from './plugins/advertisingPlugin';
 import { TaskGetWritableBook } from './tasks/items/taskGetWritableBook';
 import { commandHandlerPlugin } from './plugins/commandHandlerPlugin';
+import { statisticsPlugin } from './plugins/statisticsPlugin';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -56,6 +57,7 @@ const botOptions: BotOptions = {
     walkABlockPlugin,
     advertisingPlugin,
     commandHandlerPlugin,
+    statisticsPlugin,
   },
 
   logOptions: {
