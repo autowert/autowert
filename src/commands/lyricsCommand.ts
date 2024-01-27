@@ -72,7 +72,7 @@ export const lyricsCommand = new TPCommand({
         }
 
         const shouldSign = pages.length <= 15;
-        const title = `${song.title} (${song.artist})`;
+        const title = `${song.title} (${song.artist})`.slice(0, 32);
         if (!shouldSign) pages.unshift(title);
 
         await bot.useWritableBook(
