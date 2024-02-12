@@ -1,5 +1,6 @@
 import prettyMS from 'pretty-ms';
 import { ChatCommand } from './ChatCommand';
+import { TimeStats } from '../plugins/getPlayerTimeStatsPlugin';
 
 const ONE_HOUR = 60 * 60 * 1000;
 const ONE_DAY = 24 * ONE_HOUR;
@@ -31,9 +32,29 @@ export const nextncCommand = new ChatCommand({
 
   // adminOnly: true,
 
-  execute: ({ bot, invokerUsername }) => {
-    const stats = bot.playerTimeStats.getPlayerStats(invokerUsername);
-    if (!stats) return `Try again later, ${invokerUsername}!`
+  execute: ({ bot, invokerUsername, args }) => {
+    const targetIsInvoker = !args[0] || args[0].toLowerCase() === invokerUsername.toLowerCase() || !/^[A-Za-z0-9_]{3,16}$/.test(args[0]);
+    const target = targetIsInvoker ? invokerUsername : args[0];
+
+    let stats: TimeStats | undefined;
+    let statsCached = false;
+
+    if (targetIsInvoker) {
+      stats = bot.playerTimeStats.getPlayerStats(target);
+    } else {
+      const targetPlayer = Object.values(bot.players).find((player) => player.username.toLowerCase() === target.toLowerCase());
+      if (targetPlayer) {
+        stats = bot.playerTimeStats.getPlayerStats(targetPlayer.username);
+      } else {
+        const cached = Array.from(bot.playerTimeStats._playerTimeStats.values()).find((stats) => stats.username.toLowerCase() === target.toLowerCase());
+        if (!cached) return `That person is not online.`;
+
+        stats = cached;
+        statsCached = true;
+      }
+    }
+
+    if (!stats) return `Try again later, ${invokerUsername}!`;
 
     const unlockedNameColors: NameColor[] = [];
     const lockedNameColors: NameColor[] = [];
@@ -55,13 +76,15 @@ export const nextncCommand = new ChatCommand({
       }
     }
 
-    if (!lockedNameColors.length) return `You already got all free name colors, ${invokerUsername}.`;
+    // TODO: see below
+    if (!lockedNameColors.length) return `You already got all free name colors, ${stats.username}.`;
 
     const nextNameColor = lockedNameColors[0];
     const requiredPT = nextNameColor.minPT - pt;
     const requiredJD = nextNameColor.minJD - jd;
 
-    return `Hey ${invokerUsername}, the next name color you will unlock is ${nextNameColor.name}. You need ${requiredJD > 0 ? `${prettyMS(requiredJD, { verbose: true, unitCount: 2 })} more join date` : ''}${requiredPT > 0 && requiredJD > 0 ? ' and ' : ''}${requiredPT > 0 ? `${prettyMS(requiredPT, { verbose: true, unitCount: 2 })} more play time` : ''}.`;
+    // TODO: format message according to targetIsInvoker
+    return `Hey ${stats.username}, the next name color you will unlock is ${nextNameColor.name}. You need ${requiredJD > 0 ? `${prettyMS(requiredJD, { verbose: true, unitCount: 2 })} more join date` : ''}${requiredPT > 0 && requiredJD > 0 ? ' and ' : ''}${requiredPT > 0 ? `${prettyMS(requiredPT, { verbose: true, unitCount: 2 })} more play time` : ''}${statsCached ? ' (CACHED)' : ''}.`;
   },
 });
 

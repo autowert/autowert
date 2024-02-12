@@ -109,7 +109,7 @@ export const getPlayerTimeStatsPlugin: BotPlugin = (bot) => {
   };
 };
 
-type TimeStats = {
+export type TimeStats = {
   // TODO: maybe remove username here, not sure
   username: string;
   pt: number;
