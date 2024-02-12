@@ -1,5 +1,8 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
 
+const ONE_HOUR = 60 * 60 * 1000;
+const UPDATE_AFTER = ONE_HOUR;
+
 const units = {
   seconds: 1000,
   minutes: 1000 * 60,
@@ -53,7 +56,7 @@ export const getPlayerTimeStatsPlugin: BotPlugin = (bot) => {
       const jd = parseTimeStr(jdStr);
       const pt = parseTimeStr(ptStr);
 
-      const stats: TimeStats = { username, jd, pt };
+      const stats: TimeStats = { username, jd, pt, updatedAt: Date.now() };
       bot.emit('playerTimeStats', stats);
     } catch (err) {
       console.warn('error with time string', { username, msg, jdStr, ptStr });
@@ -72,7 +75,13 @@ export const getPlayerTimeStatsPlugin: BotPlugin = (bot) => {
 
     const getStatsInterval = setInterval(() => {
       const players = Object.keys(bot.players);
-      const player = players.find((username) => !pending.has(username) && !playerTimeStats.has(username));
+      const player = players.find((username) => {
+        if (pending.has(username)) return false;
+        if (!playerTimeStats.has(username)) return true;
+
+        const stats = playerTimeStats.get(username)!;
+        return stats.updatedAt + UPDATE_AFTER < Date.now();
+      });
 
       if (!player) return;
 
@@ -105,6 +114,8 @@ type TimeStats = {
   username: string;
   pt: number;
   jd: number;
+
+  updatedAt: number;
 }
 
 declare module 'mineflayer' {
