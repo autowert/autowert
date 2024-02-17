@@ -73,11 +73,21 @@ function createBot() {
 
   const localOptions = { ...botOptions };
 
+  let waitingForAuth = false;
+  localOptions.onMsaCode = (data) => {
+    waitingForAuth = true;
+
+    console.info('[C] [msa] First time signing in. Please authenticate now:');
+    console.info('[C]', data.message);
+  };
+
   const bot = mineflayer.createBot(localOptions);
   Object.assign(global, { bot });
 
   const checkBotUp = () => {
     if (bot._client.ended) {
+      if (waitingForAuth) return console.log('bot seems ended, but waiting for auth');
+
       console.log('bot._cliend seems to be ended, emmiting end');
       bot.emit('end', '_client ended');
     }
