@@ -2,8 +2,48 @@ import type { Plugin as BotPlugin } from 'mineflayer';
 
 // see https://wiki.vg/index.php?title=Protocol&oldid=14204#Click_Window
 export const windowInteractionsPlugin: BotPlugin = (bot) => {
+  const transactionMap = new Map<`${number};${number}`, { reject: () => void, resolve: () => void }>();
+  bot._client.on('transaction', (packet, meta) => {
+    const windowId: number = packet.windowId;
+    const action: number = packet.action;
+    const accepted: boolean = packet.accepted;
+
+    const key: Parameters<(typeof transactionMap)['get']>[0] = `${windowId};${action}`;
+    const handlers = transactionMap.get(key);
+    if (!handlers) return;
+    transactionMap.delete(key);
+
+    if (accepted) handlers.resolve();
+    else handlers.reject();
+  });
+
+  let action = 999;
   const click = (mode: number, button: number, slot: number): Promise<void> => {
-    return bot.clickWindow(slot, button, mode);
+    if(![1].includes(mode)) // TODO: see below
+      return bot.clickWindow(slot, button, mode);
+
+    return new Promise((resolve, reject) => {
+      const window = bot.currentWindow || bot.inventory;
+
+      bot._client.write('window_click', {
+        windowId: window.id,
+        slot: slot,
+        mouseButton: button,
+        action: action,
+        mode: mode,
+        item: slot === -999
+          ? null
+          : [1].includes(mode) // TODO: complete modes where item is blockId: -1
+            ? { blockId: -1 }
+            : window.slots[slot],
+      });
+
+      const handler = { resolve, reject };
+      const key: Parameters<(typeof transactionMap)['get']>[0] = `${window.id};${action}`;
+      transactionMap.set(key, handler);
+
+      action++;
+    });
   }
 
   const leftClick = (slot: number) => click(0, 0, slot);
@@ -85,8 +125,8 @@ declare module 'mineflayer' {
 
       dropItemFromSlot: SlotFunction,
       dropStackFromSlot: SlotFunction,
-      dropItemFromCursor: ()  => Promise<void>,
-      dropStackFromCursor: ()  => Promise<void>,
+      dropItemFromCursor: () => Promise<void>,
+      dropStackFromCursor: () => Promise<void>,
 
       leftClickDrag: DragFunctions,
       rightClickDrag: DragFunctions,
