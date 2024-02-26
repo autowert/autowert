@@ -17,6 +17,12 @@ export class TaskOpenChest extends Task {
       throw new Error('chestBlock not found');
     }
 
+    // TODO: don't overwrite lookAt
+    const _lookAt = bot.lookAt;
+    bot.lookAt = () => Promise.resolve();
+
     const chest = await bot.openChest(chestBlock);
+
+    bot.lookAt = _lookAt;
   }
 }
