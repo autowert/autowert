@@ -50,7 +50,7 @@ export class TaskGrabItemsFromChest extends Task {
       if (this.amount - matchingItemsInInventory <= 0) console.log('kit already in inventory, not grabbing');
       while (this.amount - matchingItemsInInventory > 0) {
         // @ts-ignore wrong types: window.withdraw(itemType, metadata, count, nbt)
-        await chest.withdraw(targetItem.type, targetItem.metadata, null, targetItem.nbt);
+        await chest.withdraw(targetItem.type, targetItem.metadata, null, null);
 
         matchingItemsInInventory += 1;
       }
