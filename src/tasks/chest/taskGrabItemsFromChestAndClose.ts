@@ -7,7 +7,7 @@ import { TaskGrabItemsFromChest } from './taskGrabItemsFromChest';
 import { TaskCloseChest } from './taskCloseChest';
 
 export class TaskGrabItemsFromChestAndClose extends TaskList {
-  protected chestPosition: Vec3;
+  readonly chestPosition: Vec3;
   protected amount;
 
   constructor(chestPosition: Vec3, amount = 1) {

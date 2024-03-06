@@ -9,6 +9,7 @@ declare module 'mineflayer' {
     kitStore: {
       taskInfos: BotTaskInfo[];
       defaultTaskInfo: BotTaskInfo | false;
+      nameTaskIndexMap: Map<string, number>;
 
       pendingRequests: Set<string>;
       totalRequests: Map<string, number>;

@@ -15,6 +15,21 @@ export const giveKitPlugin: BotPlugin = (bot) => {
   bot.kitStore.taskInfos = taskInfos;
   bot.kitStore.defaultTaskInfo = defaultTaskInfo;
 
+  bot.kitStore.nameTaskIndexMap = new Map();
+  for (const [index, taskInfo] of bot.kitStore.taskInfos.entries()) {
+    for (const name of taskInfo.names) {
+      const nameLower = name.toLowerCase();
+
+      if (bot.kitStore.nameTaskIndexMap.has(nameLower)) {
+        console.warn('duplicate name in task infos, overwriting');
+      }
+
+      bot.kitStore.nameTaskIndexMap.set(nameLower, index);
+    }
+  }
+
+  // TODO: use nameTaskIndexMap below
+
   bot.kitStore.pendingRequests = new Set<string>();
   bot.on('outgoingTPrequest', (to) => { bot.kitStore.pendingRequests.add(to); });
   bot.on('outgoingTPaccepted', (to) => { bot.kitStore.pendingRequests.delete(to); });
