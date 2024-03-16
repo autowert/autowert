@@ -1,7 +1,8 @@
 import type { Plugin as BotPlugin, BotEvents } from 'mineflayer';
-import { createWriteStream } from 'fs';
+import { createWriteStream, mkdirSync } from 'fs';
 import { sleep } from '../../util/sleep';
 
+mkdirSync('data', { recursive: true });
 const writeStream = createWriteStream('data/blacklist.jsonl', { flags: 'a' });
 
 export const blacklistPlugin: BotPlugin = (bot) => {
