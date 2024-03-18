@@ -21,7 +21,7 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       const nameLower = name.toLowerCase();
 
       if (bot.kitStore.nameTaskIndexMap.has(nameLower)) {
-        console.warn('duplicate name in task infos, overwriting');
+        console.warn('duplicate name in task infos, overwriting:', nameLower);
       }
 
       bot.kitStore.nameTaskIndexMap.set(nameLower, index);
