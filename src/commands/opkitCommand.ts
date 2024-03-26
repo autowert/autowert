@@ -1,21 +1,24 @@
 import { TPCommand } from './TPCommand';
 
+import { type Chest } from 'mineflayer';
 import { sleep } from '../util/sleep';
 import { TaskList } from '../tasks/taskList';
 import { TaskEnsureNearBlock } from '../tasks/chest/taskEnsureNearBlock';
 import { TaskCustomFunction } from '../tasks/taskCustomFunction';
+import { TaskOpenChest } from '../tasks/chest/taskOpenChest';
 
 import { opKitChestPositions } from '../../config';
 
 export const opKitCommand = new TPCommand({
   name: 'opkit',
   description: 'Gives you a kit of your choice up to 36 times.',
+  usage: '<kitId> [--back=<username>] [--limit=<count>]',
 
   prefixOverwrite: /.*/,
 
   adminOnly: true,
 
-  execute: ({ args }) => {
+  execute: ({ bot, args, flags }) => {
     const kit = args[0].toLowerCase();
     const chestPos = opKitChestPositions[kit];
 
@@ -26,14 +29,17 @@ export const opKitCommand = new TPCommand({
       };
     }
 
+    const { back } = flags;
+    const shouldTpBack = typeof back === 'string' && back in bot.players;
+
+    const limit = 'limit' in flags ? +flags.limit : false;
+
     return {
       beforeTPTask: new TaskList([
         new TaskEnsureNearBlock(chestPos, 5.5),
         new TaskCustomFunction(async (bot) => {
-          const chestBlock = bot.blockAt(chestPos);
-          if (!chestBlock) return;
-
-          const chest = await bot.openChest(chestBlock);
+          await new TaskOpenChest(chestPos).execute(bot);
+          const chest = bot.currentWindow! as Chest;
 
           let chestItemCount = 0;
           let inventoryFreeCount = 0;
@@ -44,6 +50,9 @@ export const opKitCommand = new TPCommand({
             if (slotId < chest.inventoryStart && slot) chestItemCount++;
             if (slotId >= chest.inventoryStart && slotId <= chest.inventoryEnd && !slot) inventoryFreeCount++;
           }
+
+          if (limit)
+            chestItemCount = Math.min(chestItemCount, limit); // limit to amount of single chest
 
           console.log('opkit: found %d items in chest and %d free slots in inventory', chestItemCount, inventoryFreeCount);
 
@@ -67,6 +76,37 @@ export const opKitCommand = new TPCommand({
           chest.close();
         }),
       ]),
-    }
+
+      chatResponse: !shouldTpBack && back ? 'Player not found' : undefined,
+
+      TPYTask: !shouldTpBack
+        ? undefined
+        : new TaskCustomFunction(async (bot) => {
+          await sleep(2500);
+
+          // TODO: use a task
+          // drop all items
+          for (let slotId = 0; slotId < bot.inventory.slots.length; slotId++) {
+            const slot = bot.inventory.slots[slotId];
+            if (!slot) continue;
+
+            bot._client.write('window_click', {
+              windowId: 0,
+              slot: slotId,
+              mouseButton: 1,
+              action: slotId,
+              mode: 4,
+              item: { blockId: -1 },
+            });
+          }
+
+          await sleep(150);
+
+          bot.TPYTask.set(back, new TaskCustomFunction(() => new Promise(() => { })));
+          bot.chat(`/tpa ${back}`);
+
+          return new Promise<void>(() => { }); // never resolve
+        }),
+    };
   },
 });
