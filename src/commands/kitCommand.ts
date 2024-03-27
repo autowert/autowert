@@ -4,7 +4,8 @@ export const kitCommand = new TPCommand({
   name: 'kit',
   description: 'Teleports to you with a kit.',
   usage: '[kitName]',
-
+  aliases: ['rekit'],
+  
   prefixOverwrite: /.*/,
 
   execute: async ({ bot, invokerUsername, args }) => {
