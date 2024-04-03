@@ -31,6 +31,7 @@ import { TaskGetWritableBook } from './tasks/items/taskGetWritableBook';
 import { commandHandlerPlugin } from './plugins/commandHandlerPlugin';
 import { statisticsPlugin } from './plugins/statisticsPlugin';
 import { tpyPlugin } from './plugins/tpyPlugin';
+import { antiQueueStuckPlugin } from './plugins/antiQueueStuckPlugin';
 
 const botOptions: BotOptions = {
   username: 'autowert',
@@ -60,6 +61,7 @@ const botOptions: BotOptions = {
     commandHandlerPlugin,
     statisticsPlugin,
     tpyPlugin,
+    antiQueueStuckPlugin,
   },
 
   logOptions: {
