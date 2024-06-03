@@ -31,6 +31,9 @@ dependencies:
   mineflayer:
     specifier: ^4.14.0
     version: 4.14.0
+  ms:
+    specifier: ^2.1.3
+    version: 2.1.3
   pretty-ms:
     specifier: ^7.0.1
     version: 7.0.1
@@ -54,6 +57,9 @@ devDependencies:
   '@types/koa':
     specifier: ^2.13.12
     version: 2.13.12
+  '@types/ms':
+    specifier: ^0.7.34
+    version: 0.7.34
   '@types/node':
     specifier: ^20.10.5
     version: 20.10.5
@@ -369,6 +375,10 @@ packages:
 
   /@types/mime@1.3.5:
     resolution: {integrity: sha512-/pyBZWSLD2n0dcHE3hq8s8ZvcETHtEuF+3E7XVt0Ig2nvsVQXdghHVcEkIWjy9A0wKfTn97a/PSDYohKIlnP/w==}
+
+  /@types/ms@0.7.34:
+    resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
+    dev: true
 
   /@types/mime@3.0.4:
     resolution: {integrity: sha512-iJt33IQnVRkqeqC7PzBHPTC6fDlRNRW8vjrgqtScAhrmMwe8c4Eo7+fUGTa+XdWrpEgpyKWMYmi2dIwMAYRzPw==}
