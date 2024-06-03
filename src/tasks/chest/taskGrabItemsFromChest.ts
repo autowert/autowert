@@ -49,8 +49,15 @@ export class TaskGrabItemsFromChest extends Task {
     try {
       if (this.amount - matchingItemsInInventory <= 0) console.log('kit already in inventory, not grabbing');
       while (this.amount - matchingItemsInInventory > 0) {
-        // @ts-ignore wrong types: window.withdraw(itemType, metadata, count, nbt)
-        await chest.withdraw(targetItem.type, targetItem.metadata, null, null);
+        const slotId = chest.slots.findIndex((item) => item !== null);
+
+        if (slotId !== -1 && slotId < chest.inventoryStart) {
+          await bot.windowInteractions.shiftLeftClick(slotId)
+            .catch(() => console.error('shiftLeftClick threw exception'));
+        } else {
+          console.warn('failed to grab item, invalid slot or empty:', slotId);
+          break;
+        }
 
         matchingItemsInInventory += 1;
       }
