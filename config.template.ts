@@ -9,7 +9,7 @@ import { Prefix } from './src/commands/BaseCommand';
 
 export const prefix: Prefix = '?';
 
-export const discordInvite = 'https://discord.gg/dVJFqbjc66';
+export const discordInvite: string | false = 'https://discord.gg/dVJFqbjc66';
 
 export const notificationOptions: NotificationOptions = {
   enabled: true,
