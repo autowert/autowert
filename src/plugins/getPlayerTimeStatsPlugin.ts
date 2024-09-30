@@ -91,7 +91,7 @@ export const getPlayerTimeStatsPlugin: BotPlugin = (bot) => {
       bot.chat(`/${command} ${player}`);
 
       iteration++;
-    }, 2000);
+    }, 4000);
 
     bot.once('end', () => clearInterval(getStatsInterval));
   });
