@@ -3,7 +3,7 @@ import type { Plugin as BotPlugin } from 'mineflayer';
 export const tpyPlugin: BotPlugin = (bot) => {
   bot.on('incomingTPrequest', async (from) => {
     // TODO: USE UUIDS (VERY IMPORTANT)
-    if (from !== 'Manue__l' && from !== 'GoogleComStuff') return;
+    if (from !== 'Manue__l') return;
 
     if (from in bot.players === false) {
       console.warn('incoming tp request from not connected player', from);
@@ -27,6 +27,5 @@ export const tpyPlugin: BotPlugin = (bot) => {
     }
 
     if (from === 'Manue__l') bot.chat('/tpy Manue__l');
-    else if (from === 'GoogleComStuff') bot.chat('/tpy GoogleComStuff');
   });
 };

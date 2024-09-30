@@ -58,7 +58,7 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
     };
 
     if (command.invokeTypeOnly && command.invokeTypeOnly !== ctx.invokeType) return;
-    if (command.adminOnly && (username !== 'Manue__l' && username !== 'GoogleComStuff')) return;
+    if (command.adminOnly && (username !== 'Manue__l')) return;
 
     command.execute(ctx);
   }
