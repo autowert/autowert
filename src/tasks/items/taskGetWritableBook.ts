@@ -59,10 +59,16 @@ export class TaskGetWritableBook extends Task {
       const emptyInventorySlot = emptyInventorySlots.shift()!;
       ingredientSlots.push(emptyInventorySlot);
 
-      await bot.windowInteractions.leftClick(slot);
-      await bot.windowInteractions.rightClick(chest.inventoryStart + emptyInventorySlot - 9);
-      if (item.count > 1) await bot.windowInteractions.leftClick(slot);
+      await bot.windowInteractions.rightClick(slot);
+      await sleep(10);
 
+      await bot.windowInteractions.rightClick(chest.inventoryStart + emptyInventorySlot - 9)
+      await sleep(10);
+
+      if (item.count > 1) {
+        await bot.windowInteractions.leftClick(slot)
+          .catch((err) => console.warn('GetWritableBook; put back remaining items failed', err));
+      }
       await sleep(10);
     }
 
