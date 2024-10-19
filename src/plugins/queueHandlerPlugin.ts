@@ -1,8 +1,8 @@
 import type { Plugin as BotPlugin, BotEvents } from 'mineflayer';
 
 const queuePosRe = /^Position in queue\: ([0-9]+)$/;
-// const queueDoneRe = /^Connecting to the server\.\.\.$/;
-const queueDoneRe = /^Connecting to 0b0t\.\.\.$/;
+const queueDoneRe = /^Connecting to the server\.\.\.$/;
+// const queueDoneRe = /^Connecting to 0b0t\.\.\.$/;
 
 // You were sent back to the queue for: The server you were previously on went down, you have been connected to a fallback server
 const fallbackToQueueRe = /^You were sent back to the queue for:\s*(.*)$/;
@@ -11,8 +11,13 @@ export const queueHandlerPlugin: BotPlugin = (bot) => {
   let isQueue = false;
 
   const onMessageStr: BotEvents['messagestr'] = (message) => {
-    // hack on 0b0t to detect main server
-    if (!isQueue && message === ' '.repeat(37)) {
+    const queuePosMatch = queuePosRe.exec(message);
+    const queueDoneMatch = queueDoneRe.exec(message);
+
+    if (!isQueue && (
+      message === ' '.repeat(37) || // weird legacy way to detect main server
+      queueDoneMatch
+    )) {
       bot.off('messagestr', onMessageStr);
 
       bot.emit('noQueue');
@@ -21,9 +26,6 @@ export const queueHandlerPlugin: BotPlugin = (bot) => {
       });
       return;
     }
-
-    const queuePosMatch = queuePosRe.exec(message);
-    const queueDoneMatch = queueDoneRe.exec(message);
 
     if (queuePosMatch && queuePosMatch[1]) {
       isQueue = true;
