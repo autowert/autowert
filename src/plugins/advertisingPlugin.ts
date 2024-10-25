@@ -20,9 +20,10 @@ You can suggest new features on Discord: ${blueChar}${discordInvite}
 You can find screenshots of all my kits on Discord: ${blueChar}${discordInvite}
 Stay up-to-date on my Discord: ${blueChar}${discordInvite}
 Source code is on my Discord: ${blueChar}${discordInvite}
- `.slice(1, -2)
-  .replace(/^/gm, dcColorChar)
-  .split('\n');
+ `.trim()
+  .split('\n')
+  .filter(Boolean)
+  .map((line) => dcColorChar + line);
 
 // advertise the kit feature
 const kitAds = `
@@ -40,10 +41,10 @@ There are so many kits to chose from: ${blueChar}kits
 
 Order multiple kits at once: ${blueChar}&order kit1 kit2 kit3*amount
 Gear up for a fight quickly: ${blueChar}&order pvp gapples totems*2
- `.slice(1, -2)
-  .replace(/^/gm, kitColorChar)
+ `.trim()
   .split('\n')
-  .filter(Boolean);
+  .filter(Boolean)
+  .map((line) => kitColorChar + line);
 
 const ads: string[] = [];
 if (discordInvite) {
