@@ -25,6 +25,7 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
     whispered: boolean,
   }) => {
     const { username, message, whispered } = params;
+    if(username === bot.username) return;
 
     const [msgPrefix] = /^\W*/.exec(message)!;
     const cmdMessage = message.slice(msgPrefix.length);
@@ -58,7 +59,7 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
     };
 
     if (command.invokeTypeOnly && command.invokeTypeOnly !== ctx.invokeType) return;
-    if (command.adminOnly && (username !== 'Manue__l')) return;
+    if (command.adminOnly && (username !== 'Manue__l')) return;  // TODO: permission system
 
     command.execute(ctx);
   }
