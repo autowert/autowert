@@ -22,7 +22,6 @@ import { blacklistPlugin } from './plugins/functions/blacklistPlugin';
 import { sleep } from './util/sleep';
 import { TaskWriteHelpBook } from './tasks/items/taskWriteHelpBook';
 import { playerNearNotificationPlugin } from './plugins/playerNearNotificationPlugin';
-import { eflyPlugin } from './plugins/eflyPlugin';
 import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
 import { getPlayerTimeStatsPlugin } from './plugins/getPlayerTimeStatsPlugin';
 import { walkABlockPlugin } from './plugins/walkABlockPlugin';
@@ -52,7 +51,6 @@ const botOptions: BotOptions = {
     windowInteractionsPlugin,
     useWritableBookPlugin,
     playerNearNotificationPlugin,
-    eflyPlugin,
     setTPYTaskPlugin,
     getPlayerTimeStatsPlugin,
     blacklistPlugin,
