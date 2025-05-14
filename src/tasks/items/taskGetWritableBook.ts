@@ -38,7 +38,7 @@ export class TaskGetWritableBook extends Task {
       if (slot >= chest.inventoryStart) continue;
 
       if (featherSlot === null && item.name === 'feather') featherSlot = slot;
-      if (inkSlot === null && item.type === 351 && item.metadata === 0) inkSlot = slot;
+      if (inkSlot === null && item.name === 'ink_sac') inkSlot = slot;
       if (bookSlot === null && item.name === 'book') bookSlot = slot;
     }
     if (featherSlot === null) throw new Error('no slot with feather');
