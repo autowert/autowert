@@ -20,8 +20,8 @@ export const useWritableBookPlugin: BotPlugin = (bot) => {
     if (writableBookSlot === null) throw new Error('no writable book found');
 
     if (shouldSign) {
-      // bot.signBook( slot, pages, author, title )
-      await (<any>bot).signBook(writableBookSlot, pages, bot.username, title);
+      // @ts-ignore bot.signBook( slot, pages, author, title )
+      await bot.signBook(writableBookSlot, pages, bot.username, title);
     } else {
       await bot.writeBook(writableBookSlot, pages);
     }

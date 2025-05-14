@@ -36,7 +36,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "prismarine-chat": "patches/prismarine-chat.patch"
+      "prismarine-chat": "patches/prismarine-chat.patch",
+      "mineflayer": "patches/mineflayer.patch"
     }
   }
 }

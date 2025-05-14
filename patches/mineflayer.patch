@@ -1,0 +1,28 @@
+diff --git a/lib/plugins/book.js b/lib/plugins/book.js
+index 9c16169792fb107b7b4f8e72e9a6cfe3cfa61ddc..e436e145e786eaae69c98d0950fb9f757fc1bd28 100644
+--- a/lib/plugins/book.js
++++ b/lib/plugins/book.js
+@@ -18,17 +18,17 @@ function inject (bot) {
+     if (bot.supportFeature('editBookPacketUsesNbt')) { // 1.13 - 1.17
+       editBook = (book, pages, title, slot, signing = false, hand = 0) => {
+         bot._client.write('edit_book', {
+-          hand: slot,
+-          pages,
+-          title
++          new_book: Item.toNotch(book),
++          signing,
++          hand
+         })
+       }
+     } else { // 1.18+
+       editBook = (book, pages, title, slot, signing = false, hand = 0) => {
+         bot._client.write('edit_book', {
+-          new_book: Item.toNotch(book),
+-          signing,
+-          hand
++          hand: slot,
++          pages,
++          title
+         })
+       }
+     }
