@@ -1,4 +1,5 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
+import { inspect } from 'util';
 
 const defaultOptions = {
   queue: true,
@@ -63,7 +64,14 @@ export const logPlugin: BotPlugin = (bot, botOptions) => {
 
   if (logOptions.kicked) {
     bot.on('kicked', (reason) => {
-      console.log(`bot was kicked for ${reason || 'unknown'}`);
+      // TODO: convert reason to string
+      if (!reason) reason = '<unknown>';
+      console.log(
+        'bot was kicked for:',
+        inspect(reason, {
+          depth: null,
+        }),
+      );
     });
   }
 
