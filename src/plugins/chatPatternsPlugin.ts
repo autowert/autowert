@@ -6,7 +6,7 @@ export const chatPatternsPlugin: BotPlugin = (bot) => {
     if (walkToSpeakMatch)
       bot.emit('walkToSpeak');
 
-    const incomingTPrequestMatch = /^Type \/tpy ([A-Za-z0-9_]+) to accept or \/tpn \1 to deny\.$/.exec(msg);
+    const incomingTPrequestMatch = /^([A-Za-z0-9_]+) wants to teleport to you, \[ACCEPT\] or \[DENY\] or \[IGNORE\]$/.exec(msg);
     if (incomingTPrequestMatch && incomingTPrequestMatch[1])
       bot.emit('incomingTPrequest', incomingTPrequestMatch[1]);
 
