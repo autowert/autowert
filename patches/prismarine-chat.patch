@@ -1,0 +1,15 @@
+diff --git a/index.js b/index.js
+index 469e90fe97fca31a0fc09ea307e788b52c491425..35ef495bc19fb1f7d9f03320e95e296761648a59 100644
+--- a/index.js
++++ b/index.js
+@@ -96,7 +96,9 @@ function loader (registryOrVersion) {
+       // HOWEVER! If there is a translate property, there may not be a with property
+       if (typeof json.text === 'string' || typeof json.text === 'number') {
+         this.text = json.text
+-      } else if (typeof json.translate === 'string') {
++      } else if (typeof json[''] === 'string' || typeof json[''] === 'number') {
++        this.text = json[''];
++      }else if (typeof json.translate === 'string') {
+         this.translate = json.translate
+         if (typeof json.with === 'object') {
+           if (!Array.isArray(json.with)) {
