@@ -5,6 +5,8 @@ import { sleep } from '../util/sleep';
 
 export const walkABlockPlugin: BotPlugin = (bot) => {
   async function walkABlock() {
+    await bot.waitForChunksToLoad();
+
     let timesWalked = 0;
     for (const [direction, offset] of Object.entries(directionOffsets)) {
       const forthFeetBlock =
@@ -45,15 +47,6 @@ export const walkABlockPlugin: BotPlugin = (bot) => {
 
     bot.on('death', () => {
       bot.once('spawn', async () => {
-        // for some reason, the server spawns the player twice, and the bot can only walk after the second one
-        const reason = await Promise.any([
-          once(bot, 'spawn').then(() => 'spawn'),
-          sleep(2000).then(() => 'sleep'),
-        ]);
-
-        if (reason === 'sleep')
-          console.log('second spawn event not emitted within 2000 ms, walking a block to speak anyway');
-
         walkABlock();
       });
     });
