@@ -19,31 +19,8 @@ export const windowInteractionsPlugin: BotPlugin = (bot) => {
 
   let action = 999;
   const click = (mode: number, button: number, slot: number): Promise<void> => {
-    if(![1].includes(mode)) // TODO: see below
-      return bot.clickWindow(slot, button, mode);
-
-    return new Promise((resolve, reject) => {
-      const window = bot.currentWindow || bot.inventory;
-
-      bot._client.write('window_click', {
-        windowId: window.id,
-        slot: slot,
-        mouseButton: button,
-        action: action,
-        mode: mode,
-        item: slot === -999
-          ? null
-          : [1].includes(mode) // TODO: complete modes where item is blockId: -1
-            ? { blockId: -1 }
-            : window.slots[slot],
-      });
-
-      const handler = { resolve, reject };
-      const key: Parameters<(typeof transactionMap)['get']>[0] = `${window.id};${action}`;
-      transactionMap.set(key, handler);
-
-      action++;
-    });
+    // TODO: custom click implementation
+    return bot.clickWindow(slot, button, mode);
   }
 
   const leftClick = (slot: number) => click(0, 0, slot);
