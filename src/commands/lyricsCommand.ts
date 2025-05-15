@@ -27,12 +27,18 @@ export const lyricsCommand = new TPCommand({
     const [title, artist] = args.join(' ').split(/from/i);
 
     const apiUrl = `https://lyrist.vercel.app/api/${encodeURIComponent(title)}${artist ? '/' + encodeURIComponent(artist) : ''}`;
-    const lyricsPromise = axios.get(apiUrl); // request is awaited when they accepted the tp request
+    const lyricsPromise = axios.get(apiUrl).then(
+      (res) => ({ err: null, res }),
+      (err) => ({ err, res: null }),
+    ); // request is awaited when they accepted the tp request
 
     return {
       beforeTPTask: new TaskGetWritableBook(),
       TPYTask: new TaskCustomFunction(async (bot) => {
-        const { data: song } = await lyricsPromise;
+        const { err, res } = await lyricsPromise;
+        if (err) throw err;
+        const song = res!.data;
+
         if (!song || !song.lyrics) throw new Error('no lyrics found');
 
         const text: string = song.lyrics;
