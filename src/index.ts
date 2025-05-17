@@ -36,7 +36,7 @@ const botOptions: BotOptions = {
   username: 'autowert',
   auth: 'microsoft',
 
-  version: '1.12.2',
+  version: '1.20.4',
   host: '0b0t.org',
   port: 25565,
 
