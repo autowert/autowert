@@ -61,6 +61,9 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
     if (command.invokeTypeOnly && command.invokeTypeOnly !== ctx.invokeType) return;
     if (command.adminOnly && (username !== 'Manue__l')) return;  // TODO: permission system
 
+    // admin only for now
+    if (username !== 'Manue__l') return;
+
     command.execute(ctx);
   }
 
