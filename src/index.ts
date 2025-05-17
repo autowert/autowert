@@ -2,18 +2,19 @@ console.clear();
 
 import { once } from 'events';
 import mineflayer, { BotEvents, type BotOptions } from 'mineflayer';
-import { Vec3 } from 'vec3';
 
 import { registerExitHandler } from './util/exitHandler';
 import './util/persistentLog'
 import './util/httpServer';
+import './util/debugHelper';
+import './util/handleUncaught';
 
 import { uptimePlugin } from './plugins/uptimePlugin';
 import { chatPatternsPlugin } from './plugins/chatPatternsPlugin';
 import { logPlugin } from './plugins/logPlugin';
 import { queueHandlerPlugin } from './plugins/queueHandlerPlugin';
 import { tpsPlugin } from './plugins/tpsPlugin';
-import { getConnectedContainersPlugin, getTotalStacks } from './plugins/getConnectedContainers';
+import { getConnectedContainersPlugin } from './plugins/getConnectedContainers';
 import { windowInteractionsPlugin } from './plugins/windowInteractionsPlugin';
 
 import { giveKitPlugin } from './plugins/functions/giveKitPlugin';
@@ -27,7 +28,6 @@ import { setTPYTaskPlugin } from './plugins/functions/setTPYTask';
 import { getPlayerTimeStatsPlugin } from './plugins/getPlayerTimeStatsPlugin';
 import { walkABlockPlugin } from './plugins/walkABlockPlugin';
 import { advertisingPlugin } from './plugins/advertisingPlugin';
-import { TaskGetWritableBook } from './tasks/items/taskGetWritableBook';
 import { commandHandlerPlugin } from './plugins/commandHandlerPlugin';
 import { statisticsPlugin } from './plugins/statisticsPlugin';
 import { tpyPlugin } from './plugins/tpyPlugin';
@@ -71,7 +71,7 @@ const botOptions: BotOptions = {
 
 function createBot() {
   console.log(`connecting to ${botOptions.host}`);
-
+  
   const localOptions = { ...botOptions };
 
   let waitingForAuth = false;
@@ -171,41 +171,3 @@ function createBot() {
   });
 }
 createBot();
-
-Object.assign(global, {
-  Vec3,
-  mineflayer,
-  getTotalStacks,
-  TaskGetWritableBook,
-});
-
-process.on('uncaughtException', (err, origin) => {
-  console.info('=== Unhandled Exception '.padEnd(process.stderr.columns - 2 || 40, '='));
-
-  console.error('caught unhandled exception:', err);
-  console.error('error origin:', origin);
-
-  console.info('=== End Unhandled Exception '.padEnd(process.stderr.columns - 2 || 40, '='));
-});
-
-const debuggerEnabled = process.execArgv.includes('--inspect');
-if (debuggerEnabled) {
-  process.stdout.write = () => true;
-
-  registerExitHandler(() => {
-    console.log('debugger enabled, keeping process alive');
-    return new Promise(() => { });
-  });
-}
-
-process.stdin.on('data', async (data) => {
-  const code = data.toString('utf8');
-
-  try {
-    const result = await eval(code);
-    console.log(result || 'done');
-  } catch (err) {
-    console.log('failed to run code');
-    console.log(err);
-  }
-});
