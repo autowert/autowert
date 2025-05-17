@@ -33,6 +33,8 @@ export function startTimeAnalysis(groupLabel: string) {
     if(label) {
       currentLabel = label;
       currentStartTime = performance.now();
+    } else {
+      currentLabel = undefined;
     }
   };
 
