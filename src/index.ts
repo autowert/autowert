@@ -4,6 +4,7 @@ import { once } from 'events';
 import mineflayer, { BotEvents, type BotOptions } from 'mineflayer';
 import { Vec3 } from 'vec3';
 
+import { registerExitHandler } from './util/exitHandler';
 import './util/persistentLog'
 import './util/httpServer';
 
@@ -84,6 +85,19 @@ function createBot() {
   const bot = mineflayer.createBot(localOptions);
   Object.assign(global, { bot });
 
+  let shouldReconnect = true;
+  const relaseExitHandler = registerExitHandler(() => {
+    if (bot._client.ended) return;
+    console.log('ending bot');
+    shouldReconnect = false;
+
+    bot.end();
+    return Promise.race([
+      sleep(3_000).then(() => console.log('waiting for bot to end timed out')),
+      once(bot, 'end'),
+    ]).then(() => { });
+  });
+
   const checkBotUp = () => {
     if (bot._client.ended) {
       if (waitingForAuth) return console.log('bot seems ended, but waiting for auth');
@@ -141,9 +155,16 @@ function createBot() {
   });
 
   bot.once('end', (reason) => {
-    console.log('bot ended', reason);
+    console.log('bot ended (%s)', reason);
+    if (!shouldReconnect) {
+      relaseExitHandler();
+      return;
+    }
 
     setTimeout(() => {
+      relaseExitHandler();
+      if (!shouldReconnect) return;
+
       console.log('trying to reconnect...');
       createBot();
     }, 30 * 1000);
@@ -171,9 +192,9 @@ const debuggerEnabled = process.execArgv.includes('--inspect');
 if (debuggerEnabled) {
   process.stdout.write = () => true;
 
-  process.once('beforeExit', () => {
+  registerExitHandler(() => {
     console.log('debugger enabled, keeping process alive');
-    setInterval(() => { }, 2000);
+    return new Promise(() => { });
   });
 }
 
