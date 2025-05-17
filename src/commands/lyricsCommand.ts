@@ -26,7 +26,7 @@ export const lyricsCommand = new TPCommand({
 
     const [title, artist] = args.join(' ').split(/from/i);
 
-    const apiUrl = `https://lyrist.vercel.app/api/${encodeURIComponent(title)}${artist ? '/' + encodeURIComponent(artist) : ''}`;
+    const apiUrl = `https://lyrist.val.run/api/${encodeURIComponent(title)}${artist ? '/' + encodeURIComponent(artist) : ''}`;
     const lyricsPromise = axios.get(apiUrl).then(
       (res) => ({ err: null, res }),
       (err) => ({ err, res: null }),
