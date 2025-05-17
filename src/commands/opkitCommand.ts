@@ -6,6 +6,7 @@ import { TaskList } from '../tasks/taskList';
 import { TaskEnsureNearBlock } from '../tasks/chest/taskEnsureNearBlock';
 import { TaskCustomFunction } from '../tasks/taskCustomFunction';
 import { TaskOpenChest } from '../tasks/chest/taskOpenChest';
+import { TaskDropAllItems } from '../tasks/game/taskDropAllItems';
 
 import { opKitChestPositions } from '../../config';
 
@@ -84,21 +85,8 @@ export const opKitCommand = new TPCommand({
         : new TaskCustomFunction(async (bot) => {
           await sleep(2500);
 
-          // TODO: use a task
           // drop all items
-          for (let slotId = 0; slotId < bot.inventory.slots.length; slotId++) {
-            const slot = bot.inventory.slots[slotId];
-            if (!slot) continue;
-
-            bot._client.write('window_click', {
-              windowId: 0,
-              slot: slotId,
-              mouseButton: 1,
-              action: slotId,
-              mode: 4,
-              item: { blockId: -1 },
-            });
-          }
+          await new TaskDropAllItems().execute(bot);
 
           await sleep(150);
 

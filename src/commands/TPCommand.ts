@@ -19,8 +19,13 @@ export class TPCommand extends ChatCommand {
         if (returnVal.beforeTPTask) await returnVal.beforeTPTask.execute(bot);
         if (returnVal.TPYTask) bot.TPYTask.set(target, returnVal.TPYTask);
 
-        if (returnVal.success !== false)
+        if (returnVal.success !== false) {
+          if (bot.entity.pitch > -0.49 * Math.PI) {
+            bot.look(0, -0.495 * Math.PI, true);
+          }
+
           bot.chat('/tpa ' + target);
+        }
 
         return returnVal.chatResponse || null;
       },

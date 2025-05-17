@@ -2,6 +2,7 @@ import type { Plugin as BotPlugin, BotEvents } from 'mineflayer';
 
 import { sleep } from '../../util/sleep';
 import { TaskWriteHelpBook } from '../../tasks/items/taskWriteHelpBook';
+import { TaskDropAllItems } from '../../tasks/game/taskDropAllItems';
 
 export const handleTPPlugin: BotPlugin = (bot) => {
   bot.on('outgoingTPdone', async (to) => {
@@ -24,6 +25,8 @@ export const handleTPPlugin: BotPlugin = (bot) => {
     } catch (err) {
       console.warn('failed to execute TPY task', err);
     }
+
+    await new TaskDropAllItems().execute(bot);
 
     bot.off('death', deathListener);
     if (!died) bot.chat('/kill');
