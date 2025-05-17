@@ -3,7 +3,7 @@ import { Task } from '../task';
 import type { Bot } from 'mineflayer';
 import { sleep } from '../../util/sleep';
 
-import { getSolidNeighbourBlockPositions } from './taskTryBuildPortal';
+import { getSolidNeighbourBlockPositions, getMinMaxY } from './taskTryBuildPortal';
 
 export class TaskPlaceEchest extends Task {
   async execute(bot: Bot) {
@@ -54,8 +54,9 @@ function findEchestPositions(bot: Bot) {
   const searchStart = botPosition.offset(-2, -2, -2);
   const searchEnd = botPosition.offset(2, 2, 2);
 
-  searchStart.y = Math.max(searchStart.y, 0);
-  searchEnd.y = Math.min(searchEnd.y, 255);
+  const { minY, maxY } = getMinMaxY(bot);
+  searchStart.y = Math.max(searchStart.y, minY);
+  searchEnd.y = Math.min(searchEnd.y, maxY);
 
   const possibleEchestPositions = [];
 

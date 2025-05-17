@@ -107,8 +107,9 @@ function findPortalPosition(bot: Bot, size = { width: 4, height: 5 }) {
   const searchStart = botPosition.offset(-3, -3, -3);
   const searchEnd = botPosition.offset(3, 5, 3);
 
-  searchStart.y = Math.max(searchStart.y, 0);
-  searchEnd.y = Math.min(searchEnd.y, 255);
+  const { minY, maxY } = getMinMaxY(bot);
+  searchStart.y = Math.max(searchStart.y, minY);
+  searchEnd.y = Math.min(searchEnd.y, maxY)
 
   // console.log('searching for portal spots', searchStart, searchEnd);
 
@@ -167,6 +168,12 @@ function findPortalPosition(bot: Bot, size = { width: 4, height: 5 }) {
     const portalBlockPositions = getPortalBlockPositions(placablePossiblePortal);
     return portalBlockPositions.every((pos) => bot.entity.position.distanceTo(pos) >= 1);
   });
+}
+
+export function getMinMaxY(bot: Bot) {
+  const minY = bot.game.dimension === 'overworld' ? -64 : 0;
+  const maxY = bot.game.dimension === 'overworld' ? 319 : 255;
+  return { minY, maxY };
 }
 
 // TODO: this needs to be in src/plugins and extend the bot
