@@ -31,6 +31,7 @@ import { commandHandlerPlugin } from './plugins/commandHandlerPlugin';
 import { statisticsPlugin } from './plugins/statisticsPlugin';
 import { tpyPlugin } from './plugins/tpyPlugin';
 import { antiQueueStuckPlugin } from './plugins/antiQueueStuckPlugin';
+import { fisOpenChestPlugin } from './plugins/fixOpenChest';
 
 import { handleDeathPlugin } from './plugins/handlers/handleDeath';
 import { handleSuicideFailedPlugin } from './plugins/handlers/handleSuicideFailed';
@@ -64,6 +65,7 @@ const botOptions: BotOptions = {
     statisticsPlugin,
     tpyPlugin,
     antiQueueStuckPlugin,
+    fisOpenChestPlugin,
 
     handleDeathPlugin,
     handleSuicideFailedPlugin,
