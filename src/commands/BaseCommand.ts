@@ -47,6 +47,7 @@ export type BaseCommandContext = {
 
   invokerUsername: string;
   invokerPlayer: Player;
+  invokerIsAdmin: boolean;
 
   invokeType: InvokeType;
   invokePrefix: string;

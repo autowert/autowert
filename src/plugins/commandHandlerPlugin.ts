@@ -44,11 +44,14 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
       return;
     }
 
+    const invokerIsAdmin = player.username === 'Manue__l';
+
     const ctx: BaseCommandContext = {
       bot,
 
       invokerUsername: username,
       invokerPlayer: player,
+      invokerIsAdmin,
 
       invokeType: whispered ? 'private' : 'public',
       invokePrefix: msgPrefix,
@@ -59,10 +62,10 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
     };
 
     if (command.invokeTypeOnly && command.invokeTypeOnly !== ctx.invokeType) return;
-    if (command.adminOnly && (username !== 'Manue__l')) return;  // TODO: permission system
+    if (command.adminOnly && !invokerIsAdmin) return;  // TODO: permission system
 
     // admin only for now
-    if (username !== 'Manue__l') return;
+    if (!invokerIsAdmin) return;
 
     command.execute(ctx);
   }

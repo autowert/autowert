@@ -11,12 +11,11 @@ export class TPCommand extends ChatCommand {
           ...chatCtx,
         };
 
-        const { bot, invokerUsername, flags } = ctx;
+        const { bot, invokerUsername, invokerIsAdmin, flags } = ctx;
 
         let overrideTarget: string | false = false;
         if ('to' in flags) {
-          if (invokerUsername !== 'Manue__l')
-            return null;
+          if (!invokerIsAdmin) return null;
 
           const targetUsername = flags.to.toString().toLowerCase();
           const actualUsername = Object.keys(bot.players).find(username => username.toLowerCase() === targetUsername);
