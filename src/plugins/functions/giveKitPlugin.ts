@@ -75,6 +75,11 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       taskInfo = _taskInfo;
     }
 
+    if(taskInfo.adminOnly && username !== 'Manue__l') {
+      console.log(`admin only kit ${taskInfo.names[0] || 'NO NAME WTF?'} (${kitName}) requested by ${username}, not giving!`);
+      return { success: false };
+    }
+
     console.log(`executing task ${taskInfo.names.at(0) || 'NO NAME WTF?'} (${kitName}) kit to ${username}.`)
     if (taskInfo.isOutOfStock) {
       console.warn('item is out of stock, not giving a kit');

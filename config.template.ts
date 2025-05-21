@@ -168,6 +168,7 @@ export type TaskInfo = {
   task: Task,
 
   hideFromHelp?: boolean,
+  adminOnly?: boolean,
 };
 
 export type NotificationOptions = {

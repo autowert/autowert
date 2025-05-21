@@ -43,9 +43,12 @@ If you like §2§l${bot.username}§r, please consider telling your friends about
   private getKitPages(bot: Bot): string[] {
     const kitPages: string[] = [];
 
+    const isForAdmin = this.addressee === 'Manue__l';
+
     let n = 1;
     const allKits = bot.kitStore.taskInfos
       .filter(taskInfo => !taskInfo.hideFromHelp)
+      .filter(taskInfo => taskInfo.adminOnly !== true || isForAdmin)
       .map(taskInfo => taskInfo.names[0]);
 
     const KITS_PER_PAGE = 8;
