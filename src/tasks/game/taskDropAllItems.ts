@@ -4,12 +4,22 @@ import type { Bot } from 'mineflayer';
 import { sleep } from '../../util/sleep';
 
 export class TaskDropAllItems extends Task {
+  protected dropVanishingCurseItems: boolean;
+  constructor(dropVanishingCurseItems = false) {
+    super();
+
+    this.dropVanishingCurseItems = dropVanishingCurseItems;
+  }
+
   async execute(bot: Bot) {
     const slotsToDrops = [];
 
     for (let slotId = 0; slotId < bot.inventory.slots.length; slotId++) {
       const slot = bot.inventory.slots[slotId];
       if (!slot) continue;
+
+      const hasVanishingCurse = slot.enchants.some((ench) => ench.name === 'vanishing_curse');
+      if(!this.dropVanishingCurseItems && hasVanishingCurse) continue;
 
       slotsToDrops.push(slotId);
     }
