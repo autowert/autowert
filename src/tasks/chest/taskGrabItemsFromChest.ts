@@ -1,5 +1,6 @@
 import { Task } from '../task';
 import type { Bot, Chest } from 'mineflayer';
+import getChatMessage from 'prismarine-chat';
 
 export class ItemOutOfStockError extends Error { }
 
@@ -24,8 +25,14 @@ export class TaskGrabItemsFromChest extends Task {
       throw new ItemOutOfStockError('item out of stock');
     }
 
+    const ChatMessage = getChatMessage(bot.version);
+
     // @ts-ignore wrong nbt types
-    const targetItemName: string | undefined = targetItem?.nbt?.value?.display?.value?.Name?.value;
+    const targetItemNameRaw: string | undefined = targetItem?.nbt?.value?.display?.value?.Name?.value;
+
+    const targetItemName = targetItemNameRaw?.startsWith('{')
+      ? new ChatMessage(JSON.parse(targetItemNameRaw)).toString()
+      : targetItemNameRaw ?? '<unknown name>';
 
     let matchingItemsInInventory = bot.inventory.slots.filter((inventoryItem) => {
       if (!inventoryItem) return false;
@@ -38,7 +45,7 @@ export class TaskGrabItemsFromChest extends Task {
         // @ts-ignore wrong nbt types
         const inventoryItemName: string | undefined = inventoryItem?.nbt?.value?.display?.value?.Name?.value;
 
-        if (inventoryItemName !== targetItemName) return false;
+        if (inventoryItemName !== targetItemNameRaw) return false;
       }
 
       return true;
