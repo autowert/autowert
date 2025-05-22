@@ -55,6 +55,24 @@ export const opKitChestPositions: Record<string, Vec3 | undefined> = {
   ...chestPositions,
 };
 
+for (const [item, position] of Object.entries(itemChestPositions)) {
+  opKitChestPositions['item:' + item] = position;
+}
+
+const allKitsTasks: TaskInfo[] = [];
+const allKitNames = Object.keys(chestPositions);
+while (allKitNames.length) {
+  const names = allKitNames.splice(0, 27);
+  allKitsTasks.push({
+    names: ['allkits-' + (allKitsTasks.length + 1)],
+    task: new TaskList(
+      names.map((name) => new TaskGrabItemsFromChestAndClose(chestPositions[name as keyof typeof chestPositions])),
+      { delay: 50 },
+    ),
+    adminOnly: true,
+  });
+}
+
 const getColorPosition = (row: number, col: number): [number, number] => [row, col];
 const colorPositions = {
   black: getColorPosition(0, 0),
