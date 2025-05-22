@@ -5,63 +5,70 @@ import http from 'http';
 import Koa from 'koa';
 import { koaBody } from 'koa-body';
 
-import { dashCredentials } from '../../config';
+import { dashboardOptions } from '../../config';
 
-const app = new Koa();
+function createServer() {
+  if (dashboardOptions.enabled !== true) return;
+  const dashUsername = dashboardOptions.username;
+  const dashPassword = dashboardOptions.password;
+  const port = dashboardOptions.port ?? 8081;
+  const bind = dashboardOptions.bind ?? '127.0.0.1';
 
-const getRandomString = (length: number) => Array.from(getRandomValues(new Uint8Array(length)), (v) => String.fromCharCode((v % 75) + 48)).join('');
-app.keys = [getRandomString(128)];
+  const app = new Koa();
 
-app.use(async (ctx, next) => {
-  if (['/authme', '/.dash'].includes(ctx.path)) return next();
+  const getRandomString = (length: number) => Array.from(getRandomValues(new Uint8Array(length)), (v) => String.fromCharCode((v % 75) + 48)).join('');
+  app.keys = [getRandomString(128)];
 
-  ctx.body = 'ok';
-});
+  app.use(async (ctx, next) => {
+    if (['/authme', '/.dash'].includes(ctx.path)) return next();
 
-app.use(async (ctx, next) => {
-  if (ctx.path !== '/authme') return next();
+    ctx.body = 'ok';
+  });
 
-  const authorization = ctx.get('Authorization');
+  app.use(async (ctx, next) => {
+    if (ctx.path !== '/authme') return next();
 
-  if (!authorization) {
-    ctx.status = 401;
-    ctx.set('WWW-Authenticate', 'Basic realm="dev site"');
-  } else {
-    ctx.redirect('/');
-  }
-});
+    const authorization = ctx.get('Authorization');
 
-app.use(async (ctx, next) => {
-  const authorization = ctx.get('Authorization');
+    if (!authorization) {
+      ctx.status = 401;
+      ctx.set('WWW-Authenticate', 'Basic realm="dev site"');
+    } else {
+      ctx.redirect('/');
+    }
+  });
 
-  if (!authorization)
-    return ctx.redirect('/');
+  app.use(async (ctx, next) => {
+    const authorization = ctx.get('Authorization');
 
-  if (authorization.slice(0, 6) !== 'Basic ') return ctx.status = 400;
-  const encoded = authorization.slice(6);
-  const decoded = atob(encoded);
-  const parts = decoded.split(':');
-  const username = parts[0] || '';
-  const password = parts[1] || '';
+    if (!authorization)
+      return ctx.redirect('/');
 
-  if (
-    username !== dashCredentials.username ||
-    password !== dashCredentials.password
-  ) {
-    ctx.status = 401;
-    return ctx.redirect('/')
-  }
+    if (authorization.slice(0, 6) !== 'Basic ') return ctx.status = 400;
+    const encoded = authorization.slice(6);
+    const decoded = atob(encoded);
+    const parts = decoded.split(':');
+    const username = parts[0] || '';
+    const password = parts[1] || '';
 
-  return next();
-});
+    if (
+      username !== dashUsername ||
+      password !== dashPassword
+    ) {
+      ctx.status = 401;
+      return ctx.redirect('/')
+    }
 
-app.use(koaBody({ text: true }));
-app.use(async (ctx, next) => {
-  if (ctx.path !== '/.dash') return ctx.status = 500;
+    return next();
+  });
 
-  if (ctx.method === 'GET') {
-    ctx.set('Content-Type', 'text/html');
-    ctx.body = `
+  app.use(koaBody({ text: true }));
+  app.use(async (ctx, next) => {
+    if (ctx.path !== '/.dash') return ctx.status = 500;
+
+    if (ctx.method === 'GET') {
+      ctx.set('Content-Type', 'text/html');
+      ctx.body = `
 <!DOCTYPE html>
 <html>
 
@@ -124,30 +131,31 @@ app.use(async (ctx, next) => {
 
 </html>
 `.slice(1, -1);
-  } else if (ctx.method === 'POST') {
-    const code = ctx.request.body as any;
-    if (typeof code !== 'string' || !code) return ctx.status = 400;
+    } else if (ctx.method === 'POST') {
+      const code = ctx.request.body as any;
+      if (typeof code !== 'string' || !code) return ctx.status = 400;
 
-    console.log('executing code\n%s', JSON.stringify(code));
+      console.log('executing code\n%s', JSON.stringify(code));
 
-    try {
-      const res = await eval(code);
+      try {
+        const res = await eval(code);
 
-      ctx.status = 200;
-      ctx.body = inspect(res, false, 2, false);
-    } catch (err) {
-      ctx.status = 500;
-      ctx.body = inspect(err, false, 2, false);
+        ctx.status = 200;
+        ctx.body = inspect(res, false, 2, false);
+      } catch (err) {
+        ctx.status = 500;
+        ctx.body = inspect(err, false, 2, false);
+      }
+    } else {
+      ctx.status = 400;
     }
-  } else {
-    ctx.status = 400;
-  }
-});
+  });
 
-const port: number = Number(process.env.SERVER_PORT) || 47394;
+  const server = http.createServer(app.callback());
+  server.listen(port, bind, () => {
+    if (process.env.SERVER_PORT) return;
+    console.log('http server listening on http://localhost:' + port + '/');
+  });
+}
 
-const server = http.createServer(app.callback());
-server.listen(port, () => {
-  if (process.env.SERVER_PORT) return;
-  console.log('http server listening on http://localhost:' + port + '/');
-});
+createServer();

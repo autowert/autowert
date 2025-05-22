@@ -4,5 +4,5 @@ dist
 latest.log
 data
 
-config*.ts
+/config*.ts
 !config.template.ts

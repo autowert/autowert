@@ -1,4 +1,4 @@
-import type { TaskInfo } from '../../../config';
+import type { TaskInfo } from '../../util/configUtils';
 
 type BotTaskInfo = TaskInfo & {
   isOutOfStock?: boolean;

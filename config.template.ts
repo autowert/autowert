@@ -1,42 +1,33 @@
-import type { Task } from './src/tasks/task';
-
 import { Vec3 } from 'vec3';
+import * as CU from './src/util/configUtils';
+
 import { TaskGrabItemsFromChestAndClose } from './src/tasks/chest/taskGrabItemsFromChestAndClose';
 import { TaskList } from './src/tasks/taskList';
 import { TaskGetWritableBook } from './src/tasks/items/taskGetWritableBook';
 import { TaskRandom } from './src/tasks/taskRandom';
-import { Prefix } from './src/commands/BaseCommand';
 
-export const prefix: Prefix = '?';
+export const prefix = CU.definePrefix('?');
+export const discordInvite = CU.defineDiscordInvite(false);
 
-export const discordInvite: string | false = false;
-
-export const notificationOptions: NotificationOptions = {
-  enabled: true,
-  instance: 'https://ntfy.sh/',
-  topic: 'example-bot-topic',
-};
+export const notificationOptions = CU.defineNotifications({
+  enabled: false,
+  // instance: 'https://ntfy.sh/',
+  // topic: 'example-bot-topic',
+});
 
 // credentials for the dashboard, only to be used as the last resort
-export const dashCredentials = {
-  username: 'user',
-  password: '1234',
-};
+export const dashboardOptions = CU.defineDashboard({
+  enabled: false,
+  // username: 'user',
+  // password: '1234',
+});
 
-
-const baseChest = { x: 0, y: 0, z: 0 };
-
-function getPosition(row: number, col: number) {
-  const x = baseChest.x;
-  const y = baseChest.y + col;
-  const z = baseChest.z - row;
-
-  return new Vec3(x, y, z);
-}
-const getPosition2: typeof getPosition = (...args) => getPosition(...args).offset(3, 0, 0);
+const baseChest = new Vec3(0, 0, 0);
+const getPosition = CU.getPositionFacotry(baseChest, [1, 0, 0]);
+const getPosition2 = CU.getPositionFacotry(baseChest.offset(0, 0, 3), [1, 0, 0]);
 
 // shulker, chest or double chest with feathers, ink sacks and books
-export const bookMaterialsChestPosition = getPosition2(0, -2).offset(1, 0, 0);
+export const bookMaterialsChestPosition = getPosition(0, -2).offset(1, 0, 0);
 
 // chests containing only the item
 export const itemChestPositions = {
@@ -45,7 +36,7 @@ export const itemChestPositions = {
   ender_chest: getPosition(-1, 2),
 
   elytra: getPosition(-2, 0),
-};
+} as const;
 
 export const chestPositions = {
   pvp: getPosition(0, 0),
@@ -54,77 +45,13 @@ export const chestPositions = {
   // ...
 } as const;
 
-export const opKitChestPositions: Record<string, Vec3 | undefined> = {
-  ...chestPositions,
-};
+export const opKitChestPositions = CU.getOPKitChestPositions(chestPositions, itemChestPositions);
 
-for (const [item, position] of Object.entries(itemChestPositions)) {
-  opKitChestPositions['item:' + item] = position;
-}
-
-const allKitsTasks: TaskInfo[] = [];
-const allKitNames = Object.keys(chestPositions);
-while (allKitNames.length) {
-  const names = allKitNames.splice(0, 27);
-  allKitsTasks.push({
-    names: ['allkits-' + (allKitsTasks.length + 1)],
-    task: new TaskList(
-      names.map((name) => new TaskGrabItemsFromChestAndClose(chestPositions[name as keyof typeof chestPositions])),
-      { delay: 50 },
-    ),
-    adminOnly: true,
-  });
-}
-
-const getColorPosition = (row: number, col: number): [number, number] => [row, col];
-const colorPositions = {
-  black: getColorPosition(0, 0),
-  pink: getColorPosition(0, 1),
-  magenta: getColorPosition(0, 2),
-  // ...
-};
-const colorEmpty1 = getColorPosition(4, 2);
-const colorEmpty2 = getColorPosition(5, 2);
-
-const concreteOffset = [0, 0, 0];
-const concretePositions = {
-  ...colorPositions,
-} as const;
-
-const terracottaOffset = [0, 0, 0];
-const terracottaPositions = {
-  ...colorPositions,
-  plain: colorEmpty1,
-};
-
-function getColorTaskDefinitions(name: string, colorOffset: number[], colorPositions: Record<string, [number, number]>): TaskDefinition[] {
-  const colorTaskDefinitions: TaskDefinition[] = [];
-
-  for (const [color, pos] of Object.entries(colorPositions)) {
-    const chestPosition = getPosition(pos[0], pos[1])
-      .offset(colorOffset[0], colorOffset[1], colorOffset[2]);
-
-    const names = [`${color}-${name}`, `${color}_${name}`];
-    const task = new TaskGrabItemsFromChestAndClose(chestPosition);
-
-    opKitChestPositions[names[0]] = chestPosition;
-
-    colorTaskDefinitions.push({
-      names,
-      task,
-
-      hideFromHelp: true,
-    });
-  }
-
-  return colorTaskDefinitions;
-}
-
-const defaultTaskDefinition: TaskDefinition | false = {
+export const defaultTaskInfo = CU.defineDefaultTask(chestPositions, {
   names: ['pvp'],
-}; // can be false to not give a default kit
+}); // can be false to not give a default kit
 
-const taskDefinitions: TaskDefinition[] = [
+export const taskInfos = CU.defineTaskInfos(chestPositions, [
   {
     names: ['help', 'list'],
     task: new TaskGetWritableBook(),
@@ -146,9 +73,6 @@ const taskDefinitions: TaskDefinition[] = [
     ], { delay: 50 }),
   },
 
-  ...getColorTaskDefinitions('concrete', concreteOffset, concretePositions),
-  ...getColorTaskDefinitions('terracotta', terracottaOffset, terracottaPositions),
-
   {
     names: ['random', 'surprise'],
     task: new TaskRandom(
@@ -157,51 +81,5 @@ const taskDefinitions: TaskDefinition[] = [
     ),
   },
 
-  ...allKitsTasks,
-];
-
-export const defaultTaskInfo: TaskInfo | false = defaultTaskDefinition ? addDefaultTask(defaultTaskDefinition) : false;
-export const taskInfos: TaskInfo[] = taskDefinitions.map(taskDefinition => addDefaultTask(taskDefinition));
-
-function addDefaultTask(taskDefinition: TaskDefinition): TaskInfo {
-  let task: Task;
-
-  if ('task' in taskDefinition) {
-    task = taskDefinition.task;
-  } else {
-    const chestName = taskDefinition.names[0];
-    const chestPosition = chestPositions[chestName];
-    task = new TaskGrabItemsFromChestAndClose(chestPosition);
-  }
-
-  const taskInfo: TaskInfo = {
-    ...taskDefinition,
-    task,
-  };
-
-  return taskInfo;
-}
-
-type TaskDefinition = {
-  // if the task only has names,
-  // the first name is used to set up the default task
-  names: [keyof typeof chestPositions, ...string[]],
-
-  hideFromHelp?: boolean,
-} | TaskInfo;
-
-export type TaskInfo = {
-  names: string[],
-  task: Task,
-
-  hideFromHelp?: boolean,
-  adminOnly?: boolean,
-};
-
-export type NotificationOptions = {
-  enabled: false;
-} | {
-  enabled: true;
-  instance?: string; // https://ntfy.sh/
-  topic: string;
-}
+  ...CU.getAllKitTasks(chestPositions),
+]);
