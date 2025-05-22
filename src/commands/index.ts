@@ -3,6 +3,7 @@ import { type BaseCommand } from './BaseCommand';
 import { kitCommand } from './kitCommand';
 import { kitlistCommand } from './kitlistCommand';
 import { orderCommand } from './orderCommand';
+import { elytraCommand } from './elytraCommand';
 import { blacklistCommand } from './blacklistCommand';
 import { opKitCommand } from './opkitCommand';
 import { voidtpCommand } from './voidtpCommand';
@@ -16,6 +17,7 @@ export const commands: BaseCommand[] = [
   kitCommand,
   kitlistCommand,
   orderCommand,
+  elytraCommand,
 
   blacklistCommand,
 

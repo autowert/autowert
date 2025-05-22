@@ -40,6 +40,8 @@ export const itemChestPositions = {
   obsidian: getPosition(-1, 0),
   flint_and_steel: getPosition(-1, 1),
   ender_chest: getPosition(-1, 2),
+
+  elytra: getPosition(-2, 0),
 };
 
 export const chestPositions = {
