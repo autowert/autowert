@@ -9,7 +9,7 @@ import { Prefix } from './src/commands/BaseCommand';
 
 export const prefix: Prefix = '?';
 
-export const discordInvite: string | false = 'https://discord.gg/dVJFqbjc66';
+export const discordInvite: string | false = false;
 
 export const notificationOptions: NotificationOptions = {
   enabled: true,
@@ -23,10 +23,9 @@ export const dashCredentials = {
   password: '1234',
 };
 
-// shulker, chest or double chest with feathers, ink sacks and books
-export const bookMaterialsChestPosition = new Vec3(0, 0, 0);
 
 const baseChest = { x: 0, y: 0, z: 0 };
+
 function getPosition(row: number, col: number) {
   const x = baseChest.x;
   const y = baseChest.y + col;
@@ -34,6 +33,10 @@ function getPosition(row: number, col: number) {
 
   return new Vec3(x, y, z);
 }
+const getPosition2: typeof getPosition = (...args) => getPosition(...args).offset(3, 0, 0);
+
+// shulker, chest or double chest with feathers, ink sacks and books
+export const bookMaterialsChestPosition = getPosition2(0, -2).offset(1, 0, 0);
 
 // chests containing only the item
 export const itemChestPositions = {
@@ -86,7 +89,7 @@ const colorEmpty2 = getColorPosition(5, 2);
 const concreteOffset = [0, 0, 0];
 const concretePositions = {
   ...colorPositions,
-};
+} as const;
 
 const terracottaOffset = [0, 0, 0];
 const terracottaPositions = {
@@ -125,6 +128,8 @@ const taskDefinitions: TaskDefinition[] = [
   {
     names: ['help', 'list'],
     task: new TaskGetWritableBook(),
+
+    hideFromHelp: true,
   },
   {
     // if no task is defined, it will grab a kit
@@ -151,6 +156,8 @@ const taskDefinitions: TaskDefinition[] = [
         .map(chestPosition => new TaskGrabItemsFromChestAndClose(chestPosition))
     ),
   },
+
+  ...allKitsTasks,
 ];
 
 export const defaultTaskInfo: TaskInfo | false = defaultTaskDefinition ? addDefaultTask(defaultTaskDefinition) : false;
