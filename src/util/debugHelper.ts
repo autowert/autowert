@@ -1,5 +1,6 @@
 import mineflayer from 'mineflayer';
 import { Vec3 } from 'vec3';
+import { inspect } from 'util';
 
 import { getTotalStacks } from '../plugins/getConnectedContainers';
 import { TaskGetWritableBook } from '../tasks/items/taskGetWritableBook';
@@ -17,7 +18,9 @@ process.stdin.on('data', async (data) => {
 
   try {
     const result = await eval(code);
-    console.log(result || 'done');
+    console.log(inspect(result, {
+      colors: true,
+    }));
   } catch (err) {
     console.log('failed to run code');
     console.log(err);
