@@ -91,6 +91,7 @@ function createBot() {
     console.info('[C]', data.message);
   };
 
+  const startedAt = Date.now();
   const bot = mineflayer.createBot(localOptions);
   Object.assign(global, { bot });
 
@@ -108,11 +109,22 @@ function createBot() {
   });
 
   const checkBotUp = () => {
-    if (bot._client.ended) {
-      if (waitingForAuth) return console.log('bot seems ended, but waiting for auth');
+    const isEnded = bot._client.ended;
+    const stateIsLogin = bot._client.state === 'login';
+    const upTime = Date.now() - startedAt;
 
+    if (waitingForAuth && (isEnded || stateIsLogin))
+      return console.log('bot seems not up, but waiting for auth');
+
+    if (isEnded) {
       console.log('bot._cliend seems to be ended, emmiting end');
       bot.emit('end', '_client ended');
+    }
+
+    if(stateIsLogin && upTime > 30_000) {
+      console.log('bot in login state for %dms, ending', upTime);
+      bot.end('login timeout');
+      bot.emit('end', 'login timeout');
     }
   };
   const checkBotUpInterval = setInterval(checkBotUp, 60 * 1000);
