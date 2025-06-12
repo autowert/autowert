@@ -51,8 +51,7 @@ export const chatPatternsPlugin: BotPlugin = (bot) => {
     if (teleportFailedMatch)
       bot.emit('teleportFailed');
 
-    // const suicideFailedMatch = /^Sorry, Death is too busy at the moment\. Please try again later\.\.\.$/.exec(msg);
-    const suicideFailedMatch = /^(?:&c)?Sorry, Death is too busy at the moment\. Please try again later\.\.\.(?:&r)?$/.exec(msg);
+    const suicideFailedMatch = /^It seems Death is taking a little break right now\.$/.exec(msg);
     if (suicideFailedMatch)
       bot.emit('suicideFailed');
 
