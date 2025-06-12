@@ -4,7 +4,7 @@ import { sleep } from '../util/sleep';
 // it appears 0b0t enforces a minimum delay between opening chests
 // after opening a chest, opening another chest only works after that delay
 // sending the packet before does not open a chest and will result in a timeout error
-const MIN_CHEST_DELAY = 1_300;
+const MIN_CHEST_DELAY = 220;
 
 export const fisOpenChestPlugin: BotPlugin = (bot) => {
   const _openChest = bot.openChest;
