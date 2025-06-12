@@ -12,6 +12,8 @@ export const defineNotifications = (options: NotificationOptions) => options;
 
 export const defineDashboard = (options: DashboardOptions) => options;
 
+export const defineWhitelist = (options: WhitelistOptions) => options;
+
 export const defineDefaultTask = <T extends ChestPositions>(chestPositions: T, defaultTaskDefinition: TaskDefinition<T> | false): TaskInfo | false => {
   if (!defaultTaskDefinition) return false;
   return addDefaultTask(chestPositions, defaultTaskDefinition);
@@ -99,6 +101,11 @@ type DashboardOptions = {
   username: string;
   password: string;
 };
+
+type WhitelistOptions = {
+  whitelistOnly: boolean;
+  whitelistedPlayers?: string[];
+}
 
 type ChestPositions = Record<string, Vec3>;
 

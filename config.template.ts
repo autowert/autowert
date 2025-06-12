@@ -22,6 +22,12 @@ export const dashboardOptions = CU.defineDashboard({
   // password: '1234',
 });
 
+// should the bot only respond to commands from whitelisted users
+export const whitelistOptions = CU.defineWhitelist({
+  whitelistOnly: false,
+  // whitelistedPlayers: [], // admins are always whitelisted
+});
+
 const baseChest = new Vec3(0, 0, 0);
 const getPosition = CU.getPositionFacotry(baseChest, [1, 0, 0]);
 const getPosition2 = CU.getPositionFacotry(baseChest.offset(0, 0, 3), [1, 0, 0]);

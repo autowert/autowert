@@ -4,7 +4,7 @@ import { type Prefix, type BaseCommand, type BaseCommandContext } from '../comma
 import { commands } from '../commands';
 import { parseMsg } from '../util/parseMsg';
 
-import { prefix } from '../../config';
+import { prefix, whitelistOptions } from '../../config';
 
 export const commandHandlerPlugin: BotPlugin = (bot) => {
   bot.commands = commands;
@@ -25,7 +25,7 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
     whispered: boolean,
   }) => {
     const { username, message, whispered } = params;
-    if(username === bot.username) return;
+    if (username === bot.username) return;
 
     const [msgPrefix] = /^\W*/.exec(message)!;
     const cmdMessage = message.slice(msgPrefix.length);
@@ -62,10 +62,18 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
     };
 
     if (command.invokeTypeOnly && command.invokeTypeOnly !== ctx.invokeType) return;
-    if (command.adminOnly && !invokerIsAdmin) return;  // TODO: permission system
+    if (command.adminOnly && !invokerIsAdmin) { // TODO: permission system
+      console.log('Attempt to invoke admin only command %s by non-admin user %s', command.name, username);
+      return;
+    }
 
-    // admin only for now
-    if (!invokerIsAdmin) return;
+    if (whitelistOptions.whitelistOnly) {
+      const isWhitelisted = invokerIsAdmin || whitelistOptions.whitelistedPlayers?.includes(username);
+      if (!isWhitelisted) {
+        console.info('Attempt to invoke command %s by non-whitelisted user %s', command.name, username);
+        return;
+      }
+    }
 
     command.execute(ctx);
   }
