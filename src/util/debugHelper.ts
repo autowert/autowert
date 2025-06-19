@@ -17,7 +17,7 @@ process.stdin.on('data', async (data) => {
   const code = data.toString('utf8');
 
   try {
-    const result = await eval(code);
+    const result = await (0, eval)(code);
     console.log(inspect(result, {
       colors: true,
     }));

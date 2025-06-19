@@ -138,7 +138,7 @@ function createServer() {
       console.log('executing code\n%s', JSON.stringify(code));
 
       try {
-        const res = await eval(code);
+        const res = await (0, eval)(code);
 
         ctx.status = 200;
         ctx.body = inspect(res, false, 2, false);
