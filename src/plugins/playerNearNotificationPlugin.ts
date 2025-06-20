@@ -40,6 +40,7 @@ export const playerNearNotificationPlugin: BotPlugin = (bot) => {
     }
     recentNotifications.set(username, now);
 
+    logger.info({ username }, 'Player near bot spawn spotted');
     await publishNotification({
       title: 'Player spotted',
       message: `${username} is close to ${bot.username}`,
