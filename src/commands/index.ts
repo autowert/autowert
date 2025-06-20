@@ -5,6 +5,7 @@ import { kitlistCommand } from './kitlistCommand';
 import { orderCommand } from './orderCommand';
 import { elytraCommand } from './elytraCommand';
 import { blacklistCommand } from './blacklistCommand';
+import { uptimeCommand } from './uptimeCommand';
 import { opKitCommand } from './opkitCommand';
 import { voidtpCommand } from './voidtpCommand';
 import { portalCommand } from './portalCommand';
@@ -20,6 +21,7 @@ export const commands: BaseCommand[] = [
   elytraCommand,
 
   blacklistCommand,
+  uptimeCommand,
 
   opKitCommand,
   voidtpCommand,

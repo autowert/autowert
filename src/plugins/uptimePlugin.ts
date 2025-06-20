@@ -9,23 +9,26 @@ export const uptimePlugin: BotPlugin = (bot) => {
     connectedSince: null,
 
     getPretty: () => '',
+    getTime() {
+      const botIsConnected = bot.uptime.connectedSince !== null;
+      const botUptime = Date.now() - (botIsConnected ? bot.uptime.connectedSince! : bot.uptime.createdAt);
+
+      return botUptime;
+    }
   };
-  
+
   bot.once('mainServer', () => {
     bot.uptime.connectedSince = Date.now();
   });
 
   bot.uptime.getPretty = () => {
-    const processUptime = getProcessUptime();
-    const prettyProcessUptime = prettyMS(processUptime, {
-      unitCount: 3,
-    });
-    
     const botIsConnected = bot.uptime.connectedSince !== null;
-    const botUptime = Date.now() - (botIsConnected ? bot.uptime.connectedSince! : bot.uptime.createdAt);
-    const prettyBotUptime = prettyMS(botUptime, {
-      unitCount: 3,
-    });
+    const processUptime = getProcessUptime();
+    const botUptime = bot.uptime.getTime();
+
+    const options = { unitCount: 3 };
+    const prettyProcessUptime = prettyMS(processUptime, options);
+    const prettyBotUptime = prettyMS(botUptime, options);
 
     return `Bot ${botIsConnected ? 'is connected since' : 'was created'} ${prettyBotUptime}${botIsConnected ? '' : 'ago (NOT CONNECTED)'}. Process is up since ${prettyProcessUptime}.`;
   };
@@ -38,6 +41,7 @@ declare module 'mineflayer' {
       connectedSince: number | null;
 
       getPretty: () => string;
+      getTime: () => number;
     }
   }
 }

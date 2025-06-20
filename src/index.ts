@@ -136,7 +136,8 @@ function createBot() {
   });
 
   bot.once('end', (reason) => {
-    logger.info({ reason }, 'Bot ended');
+    const uptime = bot.uptime.getTime();
+    logger.info({ reason, uptime }, 'Bot ended');
     if (!shouldReconnect) {
       relaseExitHandler();
       return;
