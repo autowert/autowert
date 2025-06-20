@@ -25,6 +25,7 @@ const destination = transport({
       level: process.env.PINO_LOG_LEVEL ?? 'info',
       options: <TransportTargetOptions['options'] & PrettyOptions>{
         sync: true,
+        translateTime: 'SYS:HH:MM:ss.L',
       },
     },
     ...additionalLogTargets,
@@ -33,9 +34,9 @@ const destination = transport({
 
 export const logger = pino({
   formatters: {
-    bindings(bindings) {
-      return { pid: bindings.pid };
-    }
+    bindings() {
+      return {};
+    },
   },
 }, destination);
 
