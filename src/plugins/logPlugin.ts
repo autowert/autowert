@@ -1,6 +1,5 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
 
-import { inspect } from 'util';
 import { logger } from '../util/logger';
 
 const defaultOptions = {
@@ -101,18 +100,18 @@ export const logPlugin: BotPlugin = (bot, botOptions) => {
   */
 
   if (logOptions.tpIncoming) {
-    bot.on('incomingTPrequest', (from) => logger.info({ from }, `${from} requested to teleport to the bot.`));
-    bot.on('incomingTPaccepted', (from) => logger.info({ from }, `Accepted tp request from ${from}.`));
-    bot.on('incomingTPdenied', (from) => logger.info({ from }, `Denied tp request from ${from}.`));
-    bot.on('incomingTPtimeout', (from) => logger.info({ from }, `The tp request from ${from} timed out.`));
-    bot.on('incomingTPdone', (from) => logger.info({ from }, `${from} teleported to the bot.`));
+    bot.on('incomingTPrequest', (from) => logger.info(`${from} requested to teleport to the bot.`));
+    bot.on('incomingTPaccepted', (from) => logger.info(`Accepted tp request from ${from}.`));
+    bot.on('incomingTPdenied', (from) => logger.info(`Denied tp request from ${from}.`));
+    bot.on('incomingTPtimeout', (from) => logger.info(`The tp request from ${from} timed out.`));
+    bot.on('incomingTPdone', (from) => logger.info(`${from} teleported to the bot.`));
   }
   if (logOptions.tpOutgoing) {
-    bot.on('outgoingTPrequest', (to) => logger.info({ to }, `Requested to teleport to ${to}.`));
-    bot.on('outgoingTPaccepted', (to) => logger.info({ to }, `${to} accepted the tp request.`));
-    bot.on('outgoingTPdenied', (to) => logger.info({ to }, `${to} denied the tp request.`));
-    bot.on('outgoingTPtimeout', (to) => logger.info({ to }, `The tp request to ${to} timed out.`));
-    bot.on('outgoingTPdone', (to) => logger.info({ to }, `Teleported to ${to}.`));
+    bot.on('outgoingTPrequest', (to) => logger.info(`Requested to teleport to ${to}.`));
+    bot.on('outgoingTPaccepted', (to) => logger.info(`${to} accepted the tp request.`));
+    bot.on('outgoingTPdenied', (to) => logger.info(`${to} denied the tp request.`));
+    bot.on('outgoingTPtimeout', (to) => logger.info(`The tp request to ${to} timed out.`));
+    bot.on('outgoingTPdone', (to) => logger.info(`Teleported to ${to}.`));
   }
 
   if (logOptions.tpIncoming || logOptions.tpOutgoing) {
