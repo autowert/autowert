@@ -1,4 +1,5 @@
 import { TPCommand } from './TPCommand';
+import { logger } from '../util/logger';
 
 import { type Chest } from 'mineflayer';
 import { sleep } from '../util/sleep';
@@ -55,7 +56,7 @@ export const opKitCommand = new TPCommand({
           if (limit)
             chestItemCount = Math.min(chestItemCount, limit); // limit to amount of single chest
 
-          console.log('opkit: found %d items in chest and %d free slots in inventory', chestItemCount, inventoryFreeCount);
+          logger.debug({ chestItemCount, inventoryFreeCount }, 'Analyzed chest and inventory for opkit');
 
           for (let slotId = 0; slotId < chest.inventoryStart; slotId++) {
             const slot = chest.slots[slotId];
@@ -71,7 +72,7 @@ export const opKitCommand = new TPCommand({
             // await sleep(25);
           }
 
-          console.log('opkit: after moving %d items in chest and %d free slots in inventory', chestItemCount, inventoryFreeCount);
+          logger.debug({ chestItemCount, inventoryFreeCount }, 'Done moving items from chest to inventory for opkit');
 
           await sleep(25);
           chest.close();

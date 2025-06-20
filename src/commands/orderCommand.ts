@@ -1,7 +1,9 @@
-import { TaskGrabItemsFromChestAndClose } from '../tasks/chest/taskGrabItemsFromChestAndClose';
-import { TaskList } from '../tasks/taskList';
-import { CooldownManager } from '../util/CooldownManager';
 import { TPCommand } from './TPCommand';
+import { CooldownManager } from '../util/CooldownManager';
+import { logger, omit } from '../util/logger';
+
+import { TaskList } from '../tasks/taskList';
+import { TaskGrabItemsFromChestAndClose } from '../tasks/chest/taskGrabItemsFromChestAndClose';
 
 import type { Vec3 } from 'vec3';
 
@@ -26,11 +28,9 @@ export const orderCommand = new TPCommand({
   execute: async ({ bot, invokerUsername, args }) => {
     const reason = cd.checkWithReason(invokerUsername);
     if (reason !== true) {
-      console.log(`order command: ${invokerUsername} is on cooldown: ${reason}`)
+      logger.info({ invokerUsername, args, reason }, 'Order command user on cooldown');
       bot.chat(`/w ${invokerUsername} ${reason}`);
-      return {
-        success: false,
-      }
+      return { success: false };
     }
 
     let failReason: string | null = null;
@@ -103,7 +103,7 @@ export const orderCommand = new TPCommand({
     }
 
     if (failReason) {
-      console.log(`Order for ${invokerUsername} failed: ${failReason}`);
+      logger.warn({ invokerUsername, args, failReason }, 'Order command is invalid and failed');
       bot.chat(`/w ${invokerUsername} ${failReason}`);
 
       return {
@@ -130,7 +130,8 @@ export const orderCommand = new TPCommand({
     });
     // TODO: reverse if bot is closer to last than first (maybe?)
 
-    console.log(`Order for ${invokerUsername}: ${sorted.map((orderEntry) => `${orderEntry.name}*${orderEntry.amount}`).join(',')}`);
+    const order = sorted.map((entry) => omit(entry, 'chestPosition'));
+    logger.info({ invokerUsername, args, order }, 'Order command parsed, executing...');
 
     cd.used(invokerUsername);
 

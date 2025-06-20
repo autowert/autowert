@@ -1,6 +1,8 @@
 import { Task } from '../task';
 import type { Bot, BotEvents } from 'mineflayer';
+
 import { Vec3 } from 'vec3';
+import { logger } from '../../util/logger';
 
 type Direction = 'north' | 'east' | 'south' | 'west';
 type Offset = [number, number, number];
@@ -58,7 +60,7 @@ export class TaskEnsureNearBlock extends Task {
       impact[direction] = distanceDifference;
     }
 
-    console.log('found directions and impact', impact);
+    logger.debug({ currentDistance, impact }, 'Found directions and impact to get near block');
 
     if (Object.keys(impact).length === 0)
       throw new Error('cannot walk in any direction to get closer to the target block');

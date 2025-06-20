@@ -1,6 +1,8 @@
 import { Task } from '../task';
 import type { Bot, Chest } from 'mineflayer';
+
 import getChatMessage from 'prismarine-chat';
+import { logger } from '../../util/logger';
 
 export class ItemOutOfStockError extends Error { }
 
@@ -21,7 +23,7 @@ export class TaskGrabItemsFromChest extends Task {
 
     const targetItem = chest.slots.find((item) => item !== null);
     if (!targetItem) {
-      console.error('no targetItem in chest, is the chest empty?');
+      logger.info('No targetItem in chest, it is empty');
       throw new ItemOutOfStockError('item out of stock');
     }
 
@@ -51,10 +53,10 @@ export class TaskGrabItemsFromChest extends Task {
       return true;
     }).length;
 
-    console.log('grabbing item from chest with name', targetItemName, ', already', matchingItemsInInventory, 'items in inventory');
+    logger.info({ targetItemName, matchingItemsInInventory, targetAmount: this.amount }, 'Grabbing item(s) from chest');
 
     try {
-      if (this.amount - matchingItemsInInventory <= 0) console.log('kit already in inventory, not grabbing');
+      if (this.amount - matchingItemsInInventory <= 0) logger.debug('Kit already in inventory, not grabbing');
 
       const slotIds: number[] = [];
       for (const [slotId, slot] of chest.slots.entries()) {
@@ -66,18 +68,18 @@ export class TaskGrabItemsFromChest extends Task {
 
       while (this.amount - matchingItemsInInventory > 0) {
         if (!slotIds.length) {
-          console.warn('no slots left in chest to grab item from, aborting');
+          logger.warn('No more items in the chest, aborting');
+          break;
         }
 
         const slotId = slotIds.shift()!;
         await bot.windowInteractions.shiftLeftClick(slotId)
-          .catch(() => console.error('shiftLeftClick threw exception'));
+          .catch((err) => logger.debug({ err }, 'Grab item from chest threw error'));
 
         matchingItemsInInventory += 1;
       }
     } catch (err) {
-      console.error('failed to grab item from chest in loop');
-      console.error(err);
+      logger.error({ err }, 'Failed to grab item from chest in loop');
     }
   }
 }

@@ -1,6 +1,7 @@
 import { TPCommand } from './TPCommand';
-
 import { sleep } from '../util/sleep';
+import { logger } from '../util/logger';
+
 import { TaskCustomFunction } from '../tasks/taskCustomFunction';
 import { TaskEnsureNearBlock } from '../tasks/chest/taskEnsureNearBlock';
 import { TaskTryBuildPortal } from '../tasks/game/taskTryBuildPortal';
@@ -33,7 +34,7 @@ export const portalCommand = new TPCommand({
         try {
           await bot.windowInteractions.shiftLeftClick(itemSlot);
         } catch (err) {
-          console.log('portal: shift left click failed', err);
+          logger.error(err, 'Get obsidian from container for portal command failed');
         }
 
         await chest.close();

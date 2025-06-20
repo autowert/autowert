@@ -1,7 +1,7 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
+
+import { logger } from '../util/logger';
 import { directionOffsets, directionYaws } from '../tasks/chest/taskEnsureNearBlock';
-import { once } from 'events';
-import { sleep } from '../util/sleep';
 
 export const walkABlockPlugin: BotPlugin = (bot) => {
   async function walkABlock() {
@@ -34,11 +34,10 @@ export const walkABlockPlugin: BotPlugin = (bot) => {
     }
 
     if (timesWalked > 0) {
-      console.log('bot walked a block, can speak now');
+      logger.debug({ timesWalked }, 'Bot walked a block, can speak now');
       bot.emit('canSpeak');
     } else {
-      // throw new Error('failed to walk a block');
-      console.warn('Failed to walk a block');
+      logger.warn({ timesWalked }, 'Failed to walk a block');
     }
   }
 

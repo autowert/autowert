@@ -1,7 +1,7 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
-import { Vec3 } from 'vec3';
 
-const DEBUG_GETCONNECTEDCONTAINERS = false;
+import { Vec3 } from 'vec3';
+import { logger } from '../util/logger';
 
 function isContainer(blockName: string): boolean {
   if (blockName === 'hopper') return true;
@@ -45,8 +45,7 @@ export const getConnectedContainersPlugin: BotPlugin = (bot) => {
       const block = bot.blockAt(pos);
       if (!block || !isContainer(block.name)) return [];
 
-      if (DEBUG_GETCONNECTEDCONTAINERS)
-        console.log('getting containers from block', block.name, 'at', pos.toArray().join(' '));
+      logger.debug({ name: block.name, pos: pos.toArray() }, 'Getting containers connected to block');
 
       const connectedContainers: ContainerInfo[] = [];
 
@@ -93,8 +92,7 @@ export const getConnectedContainersPlugin: BotPlugin = (bot) => {
         }
       }
 
-      if (DEBUG_GETCONNECTEDCONTAINERS)
-        console.log('found', connectedContainers.length, 'containers\n');
+      logger.debug({ count: connectedContainers.length }, 'Connected containers found');
 
       return connectedContainers;
     }

@@ -1,4 +1,5 @@
 import { TPCommand } from './TPCommand';
+import { logger } from '../util/logger';
 
 import { TaskCustomFunction } from '../tasks/taskCustomFunction';
 import { TaskEnsureNearBlock } from '../tasks/chest/taskEnsureNearBlock';
@@ -32,7 +33,7 @@ export const echestCommand = new TPCommand({
       try {
         await bot.windowInteractions.shiftLeftClick(itemSlot);
       } catch (err) {
-        console.log('echest: shift left click failed', err);
+        logger.error({ err, name: echestCommand.name }, 'Get echest from container failed');
       }
 
       await chest.close();

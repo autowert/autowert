@@ -1,7 +1,9 @@
-import { Vec3 } from 'vec3';
 import { Task } from '../task';
 import type { Bot } from 'mineflayer';
+
+import { Vec3 } from 'vec3';
 import { sleep } from '../../util/sleep';
+import { logger } from '../../util/logger';
 
 const offsets: Offset[] = [
   [0, 1, 0],
@@ -56,7 +58,7 @@ export class TaskTryBuildPortal extends Task {
           if (!neighbourBlock) throw new Error('neighbourBlock not defined'); // this should never happen
 
           bot.placeBlock(neighbourBlock, new Vec3(...offset))
-            .catch(() => console.log('block placement failed'));
+            .catch((err) => logger.info({ err }, 'Portal block placement failed'));
         }
 
         await sleep(50);
@@ -88,7 +90,7 @@ export class TaskTryBuildPortal extends Task {
     if (!flintRefBlock) throw new Error('flintRefBlock not found'); // this should also never happen
 
     await bot.placeBlock(flintRefBlock, new Vec3(0, 1, 0))
-      .catch(() => console.log('failed to place flint block'));
+      .catch((err) => logger.info({ err }, 'Failed to light portal with flint and steel'));
 
     await sleep(100);
   }
@@ -110,8 +112,6 @@ function findPortalPosition(bot: Bot, size = { width: 4, height: 5 }) {
   const { minY, maxY } = getMinMaxY(bot);
   searchStart.y = Math.max(searchStart.y, minY);
   searchEnd.y = Math.min(searchEnd.y, maxY)
-
-  // console.log('searching for portal spots', searchStart, searchEnd);
 
   for (let y = searchStart.y; y <= searchEnd.y - size.height; y++) {
     for (let z = searchStart.z; z <= searchEnd.z; z++) {
@@ -156,8 +156,6 @@ function findPortalPosition(bot: Bot, size = { width: 4, height: 5 }) {
       }
     }
   }
-
-  // console.log('space possible portals:\n', spacePossiblePortals.map(portal => ({ ...portal, blocks: getPortalBlockPositions(portal) })));
 
   const placablePossiblePortals = spacePossiblePortals.filter((spacePossiblePortal) => {
     const portalBlockPositions = getPortalBlockPositions(spacePossiblePortal);

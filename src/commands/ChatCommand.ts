@@ -1,5 +1,5 @@
 import { BaseCommand, type BaseCommandParams, type BaseCommandContext } from './BaseCommand';
-
+import { logger, pick, omit } from '../util/logger';
 export class ChatCommand extends BaseCommand {
   constructor(params: ChatCommandParams) {
     super({
@@ -20,7 +20,10 @@ export class ChatCommand extends BaseCommand {
           if (invokeType === 'public') bot.chat(response);
           else if (invokeType === 'private') bot.chat(`/w ${invokerUsername} ${response}`)
         } catch (err) {
-          console.log('error while executing chat command', params.name, err);
+          logger.error(
+            { err, ...pick(params, 'name'), ...omit(ctx, 'bot', 'invokerPlayer') },
+            'Error executing chat command',
+          );
           // TODO: notify target about error
         }
       },

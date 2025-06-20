@@ -3,6 +3,7 @@ import { type Prefix, type BaseCommand, type BaseCommandContext } from '../comma
 
 import { commands } from '../commands';
 import { parseMsg } from '../util/parseMsg';
+import { logger } from '../util/logger';
 
 import { prefix, whitelistOptions } from '../../config';
 
@@ -40,7 +41,7 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
 
     const player = bot.players[username];
     if (!player) {
-      console.warn('command invoked by', username, 'but player not found')
+      logger.warn({ username, player }, 'Player invoking command not found, ignoring');
       return;
     }
 
@@ -63,14 +64,17 @@ export const commandHandlerPlugin: BotPlugin = (bot) => {
 
     if (command.invokeTypeOnly && command.invokeTypeOnly !== ctx.invokeType) return;
     if (command.adminOnly && !invokerIsAdmin) { // TODO: permission system
-      console.log('Attempt to invoke admin only command %s by non-admin user %s', command.name, username);
+      logger.info({ username, cmd, args, flags }, 'Admin command invoked by non-admin user, not executing');
       return;
     }
 
     if (whitelistOptions.whitelistOnly) {
       const isWhitelisted = invokerIsAdmin || whitelistOptions.whitelistedPlayers?.includes(username);
       if (!isWhitelisted) {
-        console.info('Attempt to invoke command %s by non-whitelisted user %s', command.name, username);
+        logger.debug(
+          { whitelistOnly: whitelistOptions.whitelistOnly, username, cmd, args, flags },
+          'Command invokation by non-whitelisted user',
+        );
         return;
       }
     }

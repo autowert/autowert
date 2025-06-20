@@ -1,7 +1,9 @@
-import { Vec3 } from 'vec3';
 import { Task } from '../task';
 import type { Bot } from 'mineflayer';
+
+import { Vec3 } from 'vec3';
 import { sleep } from '../../util/sleep';
+import { logger } from '../../util/logger';
 
 import { getSolidNeighbourBlockPositions, getMinMaxY } from './taskTryBuildPortal';
 
@@ -28,7 +30,7 @@ export class TaskPlaceEchest extends Task {
     // prefer positions where the echest is close to the players head
     const getDistance = (pos: Vec3) => bot.entity.position.offset(0, 1.7, 0).distanceTo(pos);
     const echestPosition = possibleEchestPositions
-      .sort((posA, posB) => getDistance(posA) - getDistance(posB))
+      .toSorted((posA, posB) => getDistance(posA) - getDistance(posB))
       .at(0)!;
 
     const [echestRefPos, offset] = getSolidNeighbourBlockPositions(bot, echestPosition).at(0)!;
@@ -37,7 +39,7 @@ export class TaskPlaceEchest extends Task {
     await sleep(200);
 
     await bot.placeBlock(echestRefBlock, new Vec3(...offset))
-      .catch(() => console.log('failed to place echest'));
+      .catch((err) => logger.info({ err }, 'Failed to place echest'));
 
     await sleep(100);
   }

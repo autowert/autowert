@@ -1,5 +1,6 @@
 import { ChatCommand, type ChatCommandParams, type ChatCommandContext, type ChatCommandResponse } from './ChatCommand';
 import { type Task } from '../tasks/task';
+import { logger } from '../util/logger';
 
 export class TPCommand extends ChatCommand {
   constructor(params: TPCommandParams) {
@@ -25,7 +26,7 @@ export class TPCommand extends ChatCommand {
             return null;
           }
 
-          console.log(`${this.name} command invoked by ${invokerUsername} with target ${targetUsername}`);
+          logger.info({ invokerUsername, targetUsername, args: ctx.args, flags }, 'TPCommand invoked with --to flag')
           overrideTarget = actualUsername;
         }
 

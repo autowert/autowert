@@ -1,8 +1,8 @@
 import { Task } from '../task';
-
 import type { Bot } from 'mineflayer';
 
 import df from 'dateformat';
+import { logger } from '../../util/logger';
 
 export class TaskWriteHelpBook extends Task {
   protected addressee: string;
@@ -22,8 +22,8 @@ export class TaskWriteHelpBook extends Task {
 
     try {
       await bot.useWritableBook(pages, '§d§lautowert help', { drop: true });
-    } catch {
-      console.warn('failed to write help book');
+    } catch (err) {
+      logger.error(err, 'Failed to write help book');
     }
   }
 

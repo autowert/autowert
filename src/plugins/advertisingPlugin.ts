@@ -2,6 +2,8 @@ import type { Plugin as BotPlugin } from 'mineflayer';
 
 import { random } from '../util/random';
 import { sleep } from '../util/sleep';
+import { logger } from '../util/logger';
+
 import { discordInvite } from '../../config';
 
 const MIN_DELAY = 20 * 60 * 1000; // 20 min
@@ -68,7 +70,7 @@ export const advertisingPlugin: BotPlugin = (bot) => {
       if (Date.now() >= nextAd) {
         // prevent ads when the server is inactive
         if (messages < 40) {
-          console.log('sending ad, but not enough messages, trying later', `${messages} / 40`);
+          logger.info({ messages, minMessages: 40 }, 'Delaying ad message due to low chat activity');
 
           nextAd += random(0, MIN_DELAY);
           continue;
@@ -76,7 +78,7 @@ export const advertisingPlugin: BotPlugin = (bot) => {
 
         const ad = getAd();
 
-        console.log('sending ad:', ad);
+        logger.info({ ad }, 'Sending ad message');
         bot.chat(ad);
         
         nextAd = Date.now() + random(MIN_DELAY, MAX_DELAY);

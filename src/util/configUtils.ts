@@ -1,6 +1,7 @@
 import { Vec3 } from 'vec3';
 import { TaskList } from '../tasks/taskList';
 
+import type { TransportTargetOptions } from 'pino';
 import type { Prefix } from '../commands/BaseCommand';
 import type { Task } from '../tasks/task';
 import { TaskGrabItemsFromChestAndClose } from '../tasks/chest/taskGrabItemsFromChestAndClose';
@@ -22,6 +23,8 @@ export const defineDefaultTask = <T extends ChestPositions>(chestPositions: T, d
 export const defineTaskInfos = <T extends ChestPositions>(chestPositions: T, taskDefinitions: TaskDefinition<T>[]) => {
   return taskDefinitions.map((taskDefinition) => addDefaultTask(chestPositions, taskDefinition));
 }
+
+export const defineAdditionalLogTargets = (logTargets: TransportTargetOptions | TransportTargetOptions[]) => Array.isArray(logTargets) ? logTargets : [logTargets];
 
 export function getPositionFacotry(baseChest: Vec3, perRowOffset: [number, number, number] | Vec3) {
   if (Array.isArray(perRowOffset)) {

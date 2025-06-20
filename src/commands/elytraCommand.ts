@@ -1,6 +1,8 @@
+import { TPCommand } from './TPCommand';
+import { logger } from '../util/logger';
+
 import { TaskGrabItemsFromChestAndClose } from '../tasks/chest/taskGrabItemsFromChestAndClose';
 import { TaskDropAllItems } from '../tasks/game/taskDropAllItems';
-import { TPCommand } from './TPCommand';
 
 import { itemChestPositions } from '../../config';
 
@@ -16,7 +18,7 @@ export const elytraCommand = new TPCommand({
   execute: async () => {
     const chestPos = itemChestPositions.elytra;
     if (!chestPos) {
-      console.warn('elytra command: chest position not specified');
+      logger.warn({ chestPos }, 'Chest position for elytra command not specified');
       return { success: false };
     }
 

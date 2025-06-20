@@ -22,6 +22,9 @@ export const dashboardOptions = CU.defineDashboard({
   // password: '1234',
 });
 
+// additional log targets, see logger.ts
+export const additionalLogTargets = CU.defineAdditionalLogTargets([]);
+
 // should the bot only respond to commands from whitelisted users
 export const whitelistOptions = CU.defineWhitelist({
   whitelistOnly: false,

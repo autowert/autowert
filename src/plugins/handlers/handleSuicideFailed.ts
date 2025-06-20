@@ -1,10 +1,11 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
 
 import { sleep } from '../../util/sleep';
+import { logger } from '../../util/logger';
 
 export const handleSuicideFailedPlugin: BotPlugin = (bot) => {
   bot.on('suicideFailed', async () => {
-    console.log('suicide failed, retrying...');
+    logger.info('Suicide failed, retrying...');
 
     let died = false;
     bot.once('death', () => { died = true; });

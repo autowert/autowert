@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 const beforeExit = new Set<() => void | Promise<void>>();
 
 /** @returns {() => void} function to release the exit handler */
@@ -10,18 +12,17 @@ export function registerExitHandler(callback: () => void | Promise<void>) {
 
 let isExiting = false;
 async function onExit(reason: string, signal?: NodeJS.Signals) {
-  if(isExiting) {
-    console.log(`Already exiting, ignoring ${reason}`);
+  if (isExiting) {
+    logger.warn({ isExiting, currentReason: reason }, 'Exit function called while already exiting, ignoring');
     return;
   }
 
-  console.log(`Gracefully exiting because of ${reason}`);
+  logger.info({ reason }, 'Gracefully exiting');
   isExiting = true;
-
 
   let hasError = false;
 
-  console.log(`Calling ${beforeExit.size} beforeExit handlers...`);
+  logger.debug({ handlerCount: beforeExit.size }, 'Inovking beforeExit handlers');
 
   const values = [];
   for (const callback of beforeExit) {
@@ -29,14 +30,14 @@ async function onExit(reason: string, signal?: NodeJS.Signals) {
       const value = callback();
       if (value instanceof Promise) {
         const handled = value.catch((err) => {
-          console.error('error in async beforeExit handler', err);
+          logger.error(err, 'Error in async beforeExit handler');
           hasError = true;
         });
 
         values.push(handled);
       }
     } catch (err) {
-      console.error('error in synchronous beforeExit handler', err);
+      logger.error(err, 'Error in synchronous beforeExit handler');
       hasError = true;
     }
   }

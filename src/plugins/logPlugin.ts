@@ -1,5 +1,7 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
+
 import { inspect } from 'util';
+import { logger } from '../util/logger';
 
 const defaultOptions = {
   queue: true,
@@ -27,22 +29,24 @@ export const logPlugin: BotPlugin = (bot, botOptions) => {
 
   if (logOptions.queue) {
     bot.on('queuePosition', (position) => {
-      console.log(`Position in queue: ${position}!`);
+      logger.info({ position }, 'Queue position received');
     });
     bot.once('queueDone', () => {
-      console.log('Queue is done.');
+      logger.info('Queue is done.');
     });
     bot.once('noQueue', () => {
-      console.log('No queue detected.');
+      logger.info('No queue detected.');
     });
     bot.once('mainServer', () => {
-      console.log('Bot connected to main server.');
+      logger.info('Bot connected to main server.');
     });
   }
 
   if (logOptions.firstSpawn) {
     bot.once('spawn', () => {
-      console.log(`${bot.username} spawned on ${botOptions.host}.`);
+      const { username } = bot;
+      const { host } = botOptions;
+      logger.info({ username, host }, 'Bot spawned');
     });
   }
   if (logOptions.spawn) {
@@ -52,38 +56,33 @@ export const logPlugin: BotPlugin = (bot, botOptions) => {
         isFirstSpawn = false;
         return;
       }
-      console.log('bot spawned');
+
+      logger.info('Bot spawned');
     })
   }
 
   if (logOptions.death) {
     bot.on('death', () => {
-      console.log(`bot died`);
+      logger.info('Bot died');
     });
   }
 
   if (logOptions.kicked) {
     bot.on('kicked', (reason) => {
-      // TODO: convert reason to string
-      if (!reason) reason = '<unknown>';
-      console.log(
-        'bot was kicked for:',
-        inspect(reason, {
-          depth: null,
-        }),
-      );
+      logger.info({ reason }, 'Bot was kicked from the server');
     });
   }
 
   if (logOptions.chat) {
     bot.on('message', (msg) => {
-      console.log(msg.toAnsi());
+      const ansi = msg.toAnsi();
+      logger.info('CHAT: ' + ansi);
     });
   }
 
   if (logOptions.walkToSpeak) {
     bot.on('walkToSpeak', () => {
-      console.log('bot has to walk a block to speak');
+      logger.info('Walk to speak required');
     });
   }
 
@@ -102,22 +101,22 @@ export const logPlugin: BotPlugin = (bot, botOptions) => {
   */
 
   if (logOptions.tpIncoming) {
-    bot.on('incomingTPrequest', (from) => console.log(`${from} requested to teleport to the bot.`));
-    bot.on('incomingTPaccepted', (from) => console.log(`Accepted tp request from ${from}.`));
-    bot.on('incomingTPdenied', (from) => console.log(`Denied tp request from ${from}.`));
-    bot.on('incomingTPtimeout', (from) => console.log(`The tp request from ${from} timed out.`));
-    bot.on('incomingTPdone', (from) => console.log(`${from} teleported to the bot.`));
+    bot.on('incomingTPrequest', (from) => logger.info({ from }, `${from} requested to teleport to the bot.`));
+    bot.on('incomingTPaccepted', (from) => logger.info({ from }, `Accepted tp request from ${from}.`));
+    bot.on('incomingTPdenied', (from) => logger.info({ from }, `Denied tp request from ${from}.`));
+    bot.on('incomingTPtimeout', (from) => logger.info({ from }, `The tp request from ${from} timed out.`));
+    bot.on('incomingTPdone', (from) => logger.info({ from }, `${from} teleported to the bot.`));
   }
   if (logOptions.tpOutgoing) {
-    bot.on('outgoingTPrequest', (to) => console.log(`Requested to teleport to ${to}.`));
-    bot.on('outgoingTPaccepted', (to) => console.log(`${to} accepted the tp request.`));
-    bot.on('outgoingTPdenied', (to) => console.log(`${to} denied the tp request.`));
-    bot.on('outgoingTPtimeout', (to) => console.log(`The tp request to ${to} timed out.`));
-    bot.on('outgoingTPdone', (to) => console.log(`Teleported to ${to}.`));
+    bot.on('outgoingTPrequest', (to) => logger.info({ to }, `Requested to teleport to ${to}.`));
+    bot.on('outgoingTPaccepted', (to) => logger.info({ to }, `${to} accepted the tp request.`));
+    bot.on('outgoingTPdenied', (to) => logger.info({ to }, `${to} denied the tp request.`));
+    bot.on('outgoingTPtimeout', (to) => logger.info({ to }, `The tp request to ${to} timed out.`));
+    bot.on('outgoingTPdone', (to) => logger.info({ to }, `Teleported to ${to}.`));
   }
 
   if (logOptions.tpIncoming || logOptions.tpOutgoing) {
-    bot.on('teleportFailed', () => console.log(`Teleport failed.`))
+    bot.on('teleportFailed', () => logger.info(`Teleport failed.`))
   }
 };
 

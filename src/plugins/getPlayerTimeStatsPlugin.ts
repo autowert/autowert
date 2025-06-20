@@ -1,5 +1,7 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
 
+import { logger } from '../util/logger';
+
 const ONE_HOUR = 60 * 60 * 1000;
 const UPDATE_AFTER = ONE_HOUR;
 
@@ -27,7 +29,7 @@ function parseTimeStr(timeStr: string): number {
     const unit = match[2].endsWith('s') ? match[2] : match[2] + 's';
 
     if (unit in units === false) {
-      console.warn('[parseTimeStr]', 'unknown unit', unit, '(', timeStr, ')');
+      logger.warn({ timeStr, unit }, 'Unknown unit encountered in time string');
       continue;
     }
     const unitTime = units[unit as keyof typeof units];
@@ -59,8 +61,7 @@ export const getPlayerTimeStatsPlugin: BotPlugin = (bot) => {
       const stats: TimeStats = { username, jd, pt, updatedAt: Date.now() };
       bot.emit('playerTimeStats', stats);
     } catch (err) {
-      console.warn('error with time string', { username, msg, jdStr, ptStr });
-      console.warn(err);
+      logger.error({ err, username, msg, jdStr, ptStr }, 'Error parsing time string');
     }
   });
 

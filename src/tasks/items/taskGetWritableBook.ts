@@ -1,12 +1,13 @@
 import { Task } from '../task';
-
 import type { Bot } from 'mineflayer';
-import { Vec3 } from 'vec3';
 
+import { Vec3 } from 'vec3';
 import { sleep } from '../../util/sleep';
+import { logger } from '../../util/logger';
+
+import { TaskEnsureNearBlock } from '../chest/taskEnsureNearBlock';
 
 import { bookMaterialsChestPosition } from '../../../config';
-import { TaskEnsureNearBlock } from '../chest/taskEnsureNearBlock';
 
 export class TaskGetWritableBook extends Task {
   private materialsChestPosition: Vec3;
@@ -19,7 +20,7 @@ export class TaskGetWritableBook extends Task {
 
   async execute(bot: Bot) {
     const hasWritableBook = bot.inventory.slots.some(item => item && item.name === 'writable_book');
-    if (hasWritableBook) return console.log('bot already has writable book in inventory');
+    if (hasWritableBook) return logger.debug('Bot already has a writable book');
 
     const chestPos = this.materialsChestPosition;
 
@@ -67,7 +68,7 @@ export class TaskGetWritableBook extends Task {
 
       if (item.count > 1) {
         await bot.windowInteractions.leftClick(slot)
-          .catch((err) => console.warn('GetWritableBook; put back remaining items failed', err));
+          .catch((err) => logger.info({ err }, 'Failed to put back resources for writable book into the chest'));
       }
       await sleep(10);
     }

@@ -1,6 +1,7 @@
 import type { Plugin as BotPlugin } from 'mineflayer';
 
 import { sleep } from '../../util/sleep';
+import { logger, omit } from '../../util/logger';
 import { ItemOutOfStockError } from '../../tasks/chest/taskGrabItemsFromChest';
 
 import './kitStore';
@@ -21,7 +22,10 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       const nameLower = name.toLowerCase();
 
       if (bot.kitStore.nameTaskIndexMap.has(nameLower)) {
-        console.warn('duplicate name in task infos, overwriting:', nameLower);
+        logger.warn(
+          { name: nameLower, suggestion: 'Modify the config to resolve this!' },
+          'Duplicate name in taskInfos, overwriting.',
+        );
       }
 
       bot.kitStore.nameTaskIndexMap.set(nameLower, index);
@@ -40,19 +44,20 @@ export const giveKitPlugin: BotPlugin = (bot) => {
     bot.kitStore.pendingRequests.delete(to);
   });
 
+  // TODO: clear totalRequests after maybe 24h
   bot.kitStore.totalRequests = new Map<string, number>();
 
   bot.kitStore.getKit = async (username, kitName) => {
     kitName = kitName?.toLowerCase();
 
     if (bot.kitStore.pendingRequests.has(username)) {
-      console.log(`pending request to ${username}, not giving a kit. (wanted a ${kitName} kit)`);
+      logger.info({ username, kitName }, 'TP Request pending, not giving another kit.');
       return { success: false };
     }
 
-    const userTotalRequests = bot.kitStore.totalRequests.get(username) || 0;
+    const userTotalRequests = bot.kitStore.totalRequests.get(username) ?? 0;
     if (userTotalRequests > 40) {
-      console.log(`total kit requests from ${username} this session exceed the maximum of 40 (wanted a ${kitName} kit)`);
+      logger.info({ username, userTotalRequests, kitName }, 'User exceeded the maximum number of kit requests, not giving another kit.');
       return { success: false };
     }
 
@@ -65,7 +70,7 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       );
 
       if (!_taskInfo) {
-        console.log('unknown kit:', kitName, '-', 'not giving a kit.');
+        logger.debug({ username, kitName }, 'Unknown kit requested, ignoring');
         return { success: false };
       }
       taskInfo = _taskInfo;
@@ -75,14 +80,22 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       taskInfo = _taskInfo;
     }
 
-    if(taskInfo.adminOnly && username !== 'Manue__l') {
-      console.log(`admin only kit ${taskInfo.names[0] || 'NO NAME WTF?'} (${kitName}) requested by ${username}, not giving!`);
+    if (taskInfo.adminOnly && username !== 'Manue__l') {
+      logger.info(
+        { username, kitName, taskInfo: omit(taskInfo, 'task') },
+        'User without permission requested admin only kit.',
+      );
       return { success: false };
     }
 
-    console.log(`executing task ${taskInfo.names.at(0) || 'NO NAME WTF?'} (${kitName}) kit to ${username}.`)
+    logger.info(
+      { username, kitName, taskInfo: omit(taskInfo, 'task') },
+      'Executing task to obtain kit to give',
+    );
+
     if (taskInfo.isOutOfStock) {
-      console.warn('item is out of stock, not giving a kit');
+      // TODO: keep track of successful delivery, if first time empty dispatch notification
+      logger.info({ username, kitName }, 'Kit is out of stock, not giving');
       return { success: false };
     }
 
@@ -93,12 +106,11 @@ export const giveKitPlugin: BotPlugin = (bot) => {
       await task.execute(bot)
       return { success: true };
     } catch (err) {
-      console.log('failed to execute task', task.getName());
-      console.log(err);
-
       if (err instanceof ItemOutOfStockError) {
-        console.error('kit', taskInfo.names[0], 'is out of stock, disableing');
+        logger.info({ taskInfo: omit(taskInfo, 'task') }, 'Kit task threw ItemOutOfStockError, disabling');
         taskInfo.isOutOfStock = true;
+      } else {
+        logger.error({ taskName: task.getName(), err }, 'Failed to execute task');
       }
 
       bot.chat('/kill');

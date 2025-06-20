@@ -1,5 +1,6 @@
 import { getRandomValues } from 'crypto';
 import { inspect } from 'util';
+import { logger } from './logger';
 
 import http from 'http';
 import Koa from 'koa';
@@ -135,7 +136,7 @@ function createServer() {
       const code = ctx.request.body as any;
       if (typeof code !== 'string' || !code) return ctx.status = 400;
 
-      console.log('executing code\n%s', JSON.stringify(code));
+      logger.info({ ip: ctx.ip, code }, 'Executing code from http server');
 
       try {
         const res = await (0, eval)(code);
@@ -153,8 +154,8 @@ function createServer() {
 
   const server = http.createServer(app.callback());
   server.listen(port, bind, () => {
-    if (process.env.SERVER_PORT) return;
-    console.log('http server listening on http://localhost:' + port + '/');
+    const url = process.env.SERVER_PORT ? null : 'http://localhost:' + port + '/';
+    logger.info({ url, bind, port }, 'HTTP server is up and listening');
   });
 }
 

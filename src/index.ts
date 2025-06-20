@@ -1,10 +1,11 @@
 console.clear();
 
+import { logger, pick } from './util/logger';
+
 import { once } from 'events';
 import mineflayer, { BotEvents, type BotOptions } from 'mineflayer';
 
 import { registerExitHandler } from './util/exitHandler';
-import './util/persistentLog'
 import './util/httpServer';
 import './util/debugHelper';
 import './util/handleUncaught';
@@ -75,20 +76,20 @@ const botOptions: BotOptions = {
   logOptions: {
     chat: false,
     death: false,
+    spawn: true,
   }
 };
 
 function createBot() {
-  console.log(`connecting to ${botOptions.host}`);
-  
+  logger.info(pick(botOptions, 'username', 'host'), 'Connecting to server');
+
   const localOptions = { ...botOptions };
 
   let waitingForAuth = false;
   localOptions.onMsaCode = (data) => {
     waitingForAuth = true;
 
-    console.info('[C] [msa] First time signing in. Please authenticate now:');
-    console.info('[C]', data.message);
+    logger.info(pick(data, 'message', 'device_code', 'verification_uri'), 'Microsoft Auth required');
   };
 
   const startedAt = Date.now();
@@ -98,31 +99,33 @@ function createBot() {
   let shouldReconnect = true;
   const relaseExitHandler = registerExitHandler(() => {
     if (bot._client.ended) return;
-    console.log('ending bot');
+    logger.info('Ending bot');
     shouldReconnect = false;
 
     bot.end();
     return Promise.race([
-      sleep(3_000).then(() => console.log('waiting for bot to end timed out')),
+      sleep(3_000).then(() => logger.warn('Waiting for bot to end timed out')),
       once(bot, 'end'),
     ]).then(() => { });
   });
 
   const checkBotUp = () => {
     const isEnded = bot._client.ended;
-    const stateIsLogin = bot._client.state === 'login';
+    const { state } = bot._client;
+    const stateIsLogin = state === 'login';
     const upTime = Date.now() - startedAt;
 
     if (waitingForAuth && (isEnded || stateIsLogin))
-      return console.log('bot seems not up, but waiting for auth');
+      return logger.debug('Bot seems not up, but waiting for auth');
 
     if (isEnded) {
-      console.log('bot._cliend seems to be ended, emmiting end');
+      logger.info({ isEnded, upTime, state }, 'bot.client might have silently ended, emitting end event');
       bot.emit('end', '_client ended');
+      return;
     }
 
-    if(stateIsLogin && upTime > 30_000) {
-      console.log('bot in login state for %dms, ending', upTime);
+    if (stateIsLogin && upTime > 30_000) {
+      logger.info({ isEnded, upTime, state }, 'Bot login timed out, emitting end event');
       bot.end('login timeout');
       bot.emit('end', 'login timeout');
     }
@@ -133,7 +136,7 @@ function createBot() {
   });
 
   bot.once('end', (reason) => {
-    console.log('bot ended (%s)', reason);
+    logger.info({ reason }, 'Bot ended');
     if (!shouldReconnect) {
       relaseExitHandler();
       return;
@@ -143,7 +146,7 @@ function createBot() {
       relaseExitHandler();
       if (!shouldReconnect) return;
 
-      console.log('trying to reconnect...');
+      logger.info('Trying to reconnect...');
       createBot();
     }, 30 * 1000);
   });
