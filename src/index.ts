@@ -9,6 +9,7 @@ import { registerExitHandler } from './util/exitHandler';
 import './util/httpServer';
 import './util/debugHelper';
 import './util/handleUncaught';
+import './util/relativeTraceBase';
 
 import { uptimePlugin } from './plugins/uptimePlugin';
 import { chatPatternsPlugin } from './plugins/chatPatternsPlugin';
