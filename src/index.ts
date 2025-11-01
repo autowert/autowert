@@ -90,7 +90,7 @@ function createBot() {
   localOptions.onMsaCode = (data) => {
     waitingForAuth = true;
 
-    logger.info(pick(data, 'message', 'device_code', 'verification_uri'), 'Microsoft Auth required');
+    logger.info(pick(data, 'message', 'user_code', 'verification_uri'), 'Microsoft Auth required');
   };
 
   const startedAt = Date.now();
