@@ -13,8 +13,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/dateformat": "^5.0.3",
-    "@types/koa": "^2.15.2",
-    "@types/ms": "^0.7.34",
+    "@types/koa": "^3.0.3",
+    "@types/ms": "^2.1.0",
     "@types/node": "^22.20.1",
     "esbuild": "^0.25.12",
     "tsx": "^4.23.1",

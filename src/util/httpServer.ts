@@ -133,7 +133,7 @@ function createServer() {
 </html>
 `.slice(1, -1);
     } else if (ctx.method === 'POST') {
-      const code = ctx.request.body as any;
+      const code = (ctx.request as any).body as unknown;
       if (typeof code !== 'string' || !code) return ctx.status = 400;
 
       logger.info({ ip: ctx.ip, code }, 'Executing code from http server');

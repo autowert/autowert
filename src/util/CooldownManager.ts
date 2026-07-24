@@ -1,10 +1,10 @@
-import ms from 'ms';
+import ms, { type StringValue } from 'ms';
 
 export class CooldownManager {
-  static minDelay = (delay: number | string) => new LimitMinDelay(delay);
+  static minDelay = (delay: number | StringValue) => new LimitMinDelay(delay);
   static limit(limit: number) {
     return {
-      per: (time: number | string) => new LimitPer(limit, time),
+      per: (time: number | StringValue) => new LimitPer(limit, time),
     }
   };
 
@@ -90,7 +90,7 @@ export class CooldownManager {
 
 class LimitMinDelay {
   readonly delay: number;
-  constructor(delay: number | string) {
+  constructor(delay: number | StringValue) {
     this.delay = typeof delay === 'number' ? delay : ms(delay);
   }
 }
@@ -98,7 +98,7 @@ class LimitMinDelay {
 class LimitPer {
   readonly limit: number;
   readonly per: number;
-  constructor(limit: number, per: number | string) {
+  constructor(limit: number, per: number | StringValue) {
     this.limit = limit;
     this.per = typeof per === 'number' ? per : ms(per);
   }
