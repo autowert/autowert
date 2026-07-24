@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "packageManager": "pnpm@11.13.1",
   "scripts": {
     "dev": "tsc && tsx src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -35,11 +36,5 @@
     "prismarine-chunk": "^1.38.1",
     "timeago.js": "^4.0.2",
     "vec3": "^0.1.8"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "prismarine-chat": "patches/prismarine-chat.patch",
-      "mineflayer": "patches/mineflayer.patch"
-    }
   }
 }
