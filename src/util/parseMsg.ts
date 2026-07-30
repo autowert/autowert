@@ -4,8 +4,15 @@ export const parseMsg = (message: string) => {
 
   const args: string[] = [];
   const flags: Record<string, string | boolean | number> = {};
+
+  let parseFlags = true;
   for (const part of parts) {
-    if (part.startsWith('--')) {
+    if (parseFlags && part === '--') {
+      parseFlags = false;
+      continue;
+    }
+
+    if (parseFlags && part.startsWith('--')) {
       const str = part.slice(2);
 
       const [match, _key, _val] = str.match(/^(.+?)(?:=(.*))?$/)!;
