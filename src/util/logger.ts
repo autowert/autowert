@@ -33,6 +33,7 @@ const destination = transport({
 });
 
 export const logger = pino({
+  level: process.env.PINO_LOG_LEVEL || 'debug',
   formatters: {
     bindings() {
       return {};
