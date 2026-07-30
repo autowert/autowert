@@ -30,7 +30,7 @@ export const chatPatternsPlugin: BotPlugin = (bot) => {
     if (outgoingTPrequestMatch && outgoingTPrequestMatch[1])
       bot.emit('outgoingTPrequest', outgoingTPrequestMatch[1]);
 
-    const outgoingTPacceptedMatch = /^Your request was accepted, teleporting to: ([A-Za-z0-9_]+)$/.exec(msg);
+    const outgoingTPacceptedMatch = /^Your request was accepted[.,] [Tt]eleporting to:? ([A-Za-z0-9_]+)\.?$/.exec(msg);
     if (outgoingTPacceptedMatch && outgoingTPacceptedMatch[1])
       bot.emit('outgoingTPaccepted', outgoingTPacceptedMatch[1]);
 
